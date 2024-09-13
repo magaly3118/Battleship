@@ -39,11 +39,11 @@ MARGIN = 50
 
 # Load ship images
 ship_images = {
-    1: pygame.image.load("ship_1.png"),
-    2: pygame.image.load("ship_2.png"),
-    3: pygame.image.load("ship_3.png"),
-    4: pygame.image.load("ship_4.png"),
-    5: pygame.image.load("ship_5.png")
+    1: pygame.image.load("assets/ship_1.png"),
+    2: pygame.image.load("assets/ship_2.png"),
+    3: pygame.image.load("assets/ship_3.png"),
+    4: pygame.image.load("assets/ship_4.png"),
+    5: pygame.image.load("assets/ship_5.png")
 }
 
 # Resize the ship images to fit the grid cells
