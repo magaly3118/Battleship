@@ -362,8 +362,8 @@ def game_loop():
             draw_grid(grid1, MARGIN, MARGIN, player_grid=True)
         else:
             # Display Player 2's missile board (targeting Player 1's ships)
-            draw_text("Your Ships", WIDTH // 2 + MARGIN + 100, MARGIN - 40)  # Above Player 2's ship grid
-            draw_text("Missile Board", MARGIN + 100, MARGIN - 40)  # Above Player 2's missile board
+            draw_text("Your Ships", MARGIN + 100, MARGIN - 40)  # Above Player 1's ship grid
+            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 40)  # Above Player 1's missile board
             draw_text("Player 2's Turn", WIDTH // 2 - 100, 50)
             draw_grid(missile_board2, WIDTH // 2 + MARGIN, MARGIN, player_grid=False)
             # Display Player 2's own ship grid with hits and sunk ships
