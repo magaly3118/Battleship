@@ -1,12 +1,15 @@
 """
 
-Authors: Abhishek Bhatt [3086901], Samuel Buehler [KU ID], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
+Authors: Abhishek Bhatt [3086901], Samuel Buehler [KU ID], Collins Gatimi [2791182], 
+Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
 Date Created: 09/09/24
-Date Last Modified: 09/09/24
+Date Last Modified: 09/13/24
 
 Program Tile: Battleship
-Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
+Program Description: Create a game where two players can place their ships on their 
+grid and try to hit each other's ships by guessing the ships' location on the grid. 
+The first player to sink all the opponent's ships wins.
 
 Sources: YouTube
 Inputs:
@@ -253,6 +256,7 @@ def display_winner(winner):
                 if event.key == pygame.K_RETURN:
                     pygame.quit()
                     quit()
+
 def display_turn_screen(player_number):
     """Display a screen that informs the player that it is the other player's turn."""
     win.fill(BLACK)
@@ -270,6 +274,7 @@ def display_turn_screen(player_number):
             if event.type == pygame.KEYDOWN:
                 waiting = False
                 break
+
 def draw_text(text, x, y):
     """Utility function to draw text on the screen."""
     text_surface = font.render(text, True, WHITE)
@@ -296,6 +301,7 @@ def display_winner(winner):
                 if event.key == pygame.K_RETURN:
                     pygame.quit()
                     quit()
+
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
