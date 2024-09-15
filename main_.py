@@ -9,7 +9,7 @@ Program Tile: Battleship
 Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
 
 Sources: YouTube
-Inputs:
+Inputs: User mouse/key inputs
 Output:
 
 """
