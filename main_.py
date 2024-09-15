@@ -3,7 +3,7 @@
 Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
 Date Created: 09/09/24
-Date Last Modified: 09/09/24
+Date Last Modified: 09/15/24
 
 Program Tile: Battleship
 Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
