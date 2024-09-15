@@ -10,7 +10,13 @@ Collins (Testing/Demo) = 1 hour
 
 Samuel (Documentation) = 3 hours
 
+All of these estimates were based on previous python projects the members worked on of similar scope.
+
 # Actual Time Accounting
+
+## Monday, September 9, 2024
+
+Abhishek = 0.5 hours
 
 ## Wednesday, September 11, 2024
 
@@ -22,8 +28,20 @@ Andrew = 2.5 hours
 
 ## Friday, September 13, 2024
 
+Abhishek = 1 hour
+
+Mikaela = 2 hours
+
 ## Saturday, September 14, 2024
 
+Abhishek = 1 hour
+
 Andrew = 0.5 hours
+
+Samuel = 0.5 hours
+
+## Sunday, September 15, 2024
+
+Collins = 1 hour
 
 Samuel = 
