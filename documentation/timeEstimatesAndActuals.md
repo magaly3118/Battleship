@@ -48,4 +48,4 @@ Samuel = 0.5 hours
 
 Collins = 1 hour
 
-Samuel = 
+Samuel = 1 hour
