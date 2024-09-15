@@ -30,6 +30,13 @@ hit_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
 miss_sound = pygame.mixer.Sound("assets/sounds/splash.wav")
 shot = pygame.mixer.Sound("assets/sounds/gunshot.wav")
 
+# Load the battleship image
+battleship_image = pygame.image.load("assets/images/battleship.png") 
+battleship_image = pygame.transform.scale(battleship_image, (WIDTH//2.2, HEIGHT))  
+
+menu_ship = pygame.image.load("assets/images/battleship1.png")  
+menu_ship = pygame.transform.scale(menu_ship, (WIDTH // 2, HEIGHT//2.7)) 
+
 # Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -223,6 +230,9 @@ def main_menu():
 
     while menu_running:
         win.fill(BLACK)
+
+        win.blit(menu_ship, (300, 0)) 
+
         draw_text("Welcome to 2-Player Battleship", WIDTH // 2 , HEIGHT // 2 - 100)
         draw_text(f"Number of Ships: {selected_ships}", WIDTH // 2 , HEIGHT // 2)
         draw_text("Use UP and DOWN arrow keys to select the number of ships.", WIDTH // 2, HEIGHT // 2 + 50)
@@ -317,18 +327,22 @@ def instructions_page():
     while instructions_running:
         win.fill(BLACK)
 
-        draw_text("Instructions", WIDTH // 2 , 50)
-        draw_text("1. Place your ships on the grid.", WIDTH // 2 , 150)
-        draw_text("2. On your turn, try to hit the enemy's ships by clicking on the missile board.", WIDTH // 2 , 200)
-        draw_text("3. Colors:", WIDTH // 2 , 300)
-        draw_text("- Purple: Your ship", WIDTH // 2 , 350)
-        draw_text("- Grey: Missed shot", WIDTH // 2 , 400)
-        draw_text("- Red: Hit", WIDTH // 2 , 450)
-        draw_text("- Green: Sunk enemy ship", WIDTH // 2 , 500)
-        draw_text("- Blue: Sunk friendly ship", WIDTH // 2 , 550)
+        # Display the instructions
+        win.blit(battleship_image, (0, 0)) 
+
+        draw_text("Instructions", WIDTH // 1.5 +70, 50)
+        draw_text("1. Place your ships on the grid.", WIDTH // 1.5 +70 , 150)
+        draw_text("2. On your turn, try to hit the enemy's ships by ", WIDTH // 1.5 +70 , 200)
+        draw_text(" clicking on the missile board.", WIDTH // 1.5 +70 , 250)
+        draw_text("3. Colors:", WIDTH // 1.5 +70 , 350)
+        draw_text("- Purple: Your ship", WIDTH // 1.5 +70, 400)
+        draw_text("- Grey: Missed shot", WIDTH // 1.5 +70, 450)
+        draw_text("- Red: Hit", WIDTH // 1.5 +70, 500)
+        draw_text("- Green: Sunk enemy ship", WIDTH // 1.5 +70, 550)
+        draw_text("- Blue: Sunk friendly ship", WIDTH // 1.5 +70, 600)
 
 
-        draw_text("Press ENTER to continue...", WIDTH // 2 , HEIGHT - 100)
+        draw_text("Press ENTER to continue...", WIDTH // 1.5 +70, HEIGHT - 100)
 
         pygame.display.flip()
 
