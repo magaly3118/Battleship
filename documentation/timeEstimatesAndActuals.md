@@ -6,7 +6,7 @@ Mikaela (QA) = 2 hours
 
 Abhishek (image and sound assets) = 1 hour
 
-Collins (Testing/Demo) = 1 hour
+Collins (Testing/Demo) = 4 hours
 
 Samuel (Documentation) = 3 hours
 
@@ -28,6 +28,8 @@ Andrew = 2.5 hours
 
 ## Friday, September 13, 2024
 
+Collins = 1 hour
+
 Abhishek = 1 hour
 
 Mikaela = 2 hours
@@ -35,6 +37,8 @@ Mikaela = 2 hours
 ## Saturday, September 14, 2024
 
 Abhishek = 1 hour
+
+Collins = 2 hour
 
 Andrew = 0.5 hours
 
