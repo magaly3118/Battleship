@@ -40,3 +40,8 @@ Assuming Python and Pygame are installed correctly, you should see a window cont
 As this game is designed to be run on a single device, players are expected to hand off control of the device between rounds.
 
 When one player has sunk the other's entire fleet of ships, the game ends.
+
+# What is main_.py?
+`main_.py` (not to be confused with `main.py`) is a "test" file that was used during initial development for experimental features.
+
+Effectively, it was a separate branch intended to be merged into the main branch when ready.
