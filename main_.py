@@ -1,6 +1,6 @@
 """
 
-Authors: Abhishek Bhatt [3086901], Samuel Buehler [KU ID], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
+Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
 Date Created: 09/09/24
 Date Last Modified: 09/09/24
