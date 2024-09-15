@@ -1,6 +1,9 @@
 # EECS581_Project1
 EECS 581 Project 1 Battleship
 
+# Pygame
+To run this game, you will be required to install PyGame. You can find the instructions to install Pygame [here](https://pypi.org/project/pygame/).
+
 # Documentation Instructions
 Documentation was generated using Doxygen.
 
