@@ -6,7 +6,7 @@ Mikaela (QA) = 2 hours
 
 Abhishek (image and sound assets) = 1 hour
 
-Collins (Testing/Demo) = 4 hour
+Collins (Testing/Demo) = 4 hours
 
 Samuel (Documentation) = 3 hours
 
