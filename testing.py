@@ -61,14 +61,22 @@ def place_ship(grid, start_row, start_col, ship_len, orientation, ship_list):
     else:
         return None
 
-# Check if ship length
-def ship_length(ship_coordinates, expected_len):
-    if len(ship_coordinates) == expected_len:
-        print(f"Ship length passed. Expected: {expected_len}")
+# Check if ship length is correct using get_ship_length_from_position in main file
+def ship_length(grid, row, col, expected_len):
+    if grid[row][col] == 1:
+        for ship_len in default_ships:
+            if all(
+                (col + i < GRID_SIZE and grid[row][col + i] == 1) or #Checks for length of ship vertically
+                (row + i < GRID_SIZE and grid[row + i][col] == 1) #Checks for length of ship horizontally
+                for i in range(ship_len) 
+            ):
+                length = ship_len
+    if length == expected_len:
+        print(f"Ship length passed. Expected: {expected_len}, got {length}")
     else:
-        print(f"Ship length failed. Expected: {expected_len}, got {len(ship_coordinates)}")
+        print(f"Ship length failed. Expected: {expected_len}, got {length}")
 
-# Check if a ship is hit or not
+# Check if a ship is hit or not, using check_hit from main file
 def check_hit(ship_grid, missile_board, row, col,ship_list):
     # Hitting the same spot
     if missile_board[row][col] != 0:
@@ -105,17 +113,9 @@ def check_hit(ship_grid, missile_board, row, col,ship_list):
         print(f"Miss at ({row}, {col})")
         return False
 
-# Check if all ships sunk
-def all_ships_sunk(grid):
-    for row in grid:
-        # Ship hasn't sunk yet, but has been hit
-        if 1 in row:
-            return False
-    return True
-
-# Test if all player's ships sunk, if expected is 'False' it means that not all the player's ships sunk
-def test_all_ships_sunk(grid, expected):
-    result = all_ships_sunk(grid)
+# Test if all player's ships sunk, if expected is 'False' it means that not all the player's ships sunk, using all_ships_sunk from main file
+def test_all_ships_sunk(ship_list, expected):
+    result = all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)
     if result == expected:
         print(f"All ships sunk test passed, result: {expected}")
     else:
@@ -161,12 +161,12 @@ def test4():
     p2_ships = []
 
     # Place a ship for both players
-    p1_ship = place_ship(grid1,0, 0, 2, "H", p1_ships)
-    p2_ship = place_ship(grid2, 5, 5, 3, "V", p2_ships)
+    place_ship(grid1,0, 0, 2, "H", p1_ships)
+    place_ship(grid2, 5, 5, 3, "V", p2_ships)
 
     # Test if ship length matches expected
-    ship_length(p1_ship, 2)
-    ship_length(p2_ship, 3)
+    ship_length(grid1, 0, 0, 2)
+    ship_length(grid2, 5, 5, 3)
 
     # Player 1's turn
     print("\nPlayer 1's turn")
@@ -176,9 +176,9 @@ def test4():
     # Check if both players' ships sunk
     print("\nShip Status")
     # Player 1's ships should not be sunk yet
-    test_all_ships_sunk(grid1, False)
+    test_all_ships_sunk(p1_ships, False)
     # Player 2's ships should not be sunk yet
-    test_all_ships_sunk(grid2, False)
+    test_all_ships_sunk(p2_ships, False)
 
     # Player 2's turn
     print("\nPlayer 2's turn")
@@ -188,9 +188,9 @@ def test4():
     # Check if both players' ships sunk
     print("\nShip Status")
     # Player 1's ships should not be sunk yet
-    test_all_ships_sunk(grid1, False)
+    test_all_ships_sunk(p1_ships, False)
     # Player 2's ships should not be sunk yet
-    test_all_ships_sunk(grid2, False)
+    test_all_ships_sunk(p2_ships, False)
 
     # Player 1's turn
     print("\nPlayer 1's turn")
@@ -200,9 +200,9 @@ def test4():
     # Check if both players' ships sunk
     print("\nShip Status")
     # Player 1's ships should not be sunk yet
-    test_all_ships_sunk(grid1, False)
+    test_all_ships_sunk(p1_ships, False)
     # Player 2's ships should not be sunk yet
-    test_all_ships_sunk(grid2, False)
+    test_all_ships_sunk(p2_ships, False)
 
     # Player 2's turn
     print("\nPlayer 2's turn")
@@ -212,9 +212,9 @@ def test4():
     # Check if both players' ships sunk
     print("\nShip Status")
     # Player 1's ships should not be sunk yet
-    test_all_ships_sunk(grid1, False)
+    test_all_ships_sunk(p1_ships, False)
     # Player 2's ships should not be sunk yet
-    test_all_ships_sunk(grid2, False)
+    test_all_ships_sunk(p2_ships, False)
 
     # Player 1's turn
     print("\nPlayer 1's turn")
@@ -224,9 +224,9 @@ def test4():
     # Check if both players' ships sunk
     print("\nShip Status")
     # Player 1's ships should not be sunk yet
-    test_all_ships_sunk(grid1, False)
+    test_all_ships_sunk(p1_ships, False)
     # Player 2's ships should be sunk 
-    test_all_ships_sunk(grid2, True)
+    test_all_ships_sunk(p2_ships, True)
 
 # Test game logic and scenarios
 def test():
