@@ -29,13 +29,14 @@ font = pygame.font.SysFont('Stencil', 25)
 hit_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
 miss_sound = pygame.mixer.Sound("assets/sounds/splash.wav")
 shot = pygame.mixer.Sound("assets/sounds/gunshot.wav")
+win_sound = pygame.mixer.Sound("assets/sounds/win.wav")
 
 # Load the battleship image
 battleship_image = pygame.image.load("assets/images/battleship.png") 
 battleship_image = pygame.transform.scale(battleship_image, (WIDTH//2.2, HEIGHT))  
 
-menu_ship = pygame.image.load("assets/images/battleship1.png")  
-menu_ship = pygame.transform.scale(menu_ship, (WIDTH // 2, HEIGHT//2.7)) 
+menu_ship = pygame.image.load("assets/images/battleship-logo.png") 
+menu_ship = pygame.transform.scale(menu_ship, (WIDTH//1.5, HEIGHT//2.7)) 
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -231,7 +232,7 @@ def main_menu():
     while menu_running:
         win.fill(BLACK)
 
-        win.blit(menu_ship, (300, 0)) 
+        win.blit(menu_ship, (200, 0)) 
 
         draw_text("Welcome to 2-Player Battleship", WIDTH // 2 , HEIGHT // 2 - 100)
         draw_text(f"Number of Ships: {selected_ships}", WIDTH // 2 , HEIGHT // 2)
@@ -307,6 +308,7 @@ def all_ships_sunk(ship_list):
 def display_winner(winner):
     """Display the winner and wait for user input to close the game."""
     win.fill(BLACK)
+    win_sound.play()
     draw_text(f"Player {winner} Wins!", WIDTH // 2 , HEIGHT // 2 - 50)
     draw_text("Press ENTER to exit", WIDTH // 2 , HEIGHT // 2 + 50)
     pygame.display.flip()
