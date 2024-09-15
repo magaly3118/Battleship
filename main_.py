@@ -10,7 +10,7 @@ Program Description: Create a game where two players can place their ships on th
 
 Sources: YouTube
 Inputs: User mouse/key inputs
-Output:
+Output: Game screen
 
 """
 # Import modules
