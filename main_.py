@@ -30,6 +30,7 @@ hit_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
 miss_sound = pygame.mixer.Sound("assets/sounds/splash.wav")
 shot = pygame.mixer.Sound("assets/sounds/gunshot.wav")
 win_sound = pygame.mixer.Sound("assets/sounds/win.wav")
+sunk = pygame.mixer.Sound("assets/sounds/sunk.wav")
 
 # Load the battleship image
 battleship_image = pygame.image.load("assets/images/battleship.png") 
@@ -202,6 +203,9 @@ def check_hit(ship_grid, missile_board, row, col, ship_list):
     if ship_grid[row][col] == 1:  # A ship is hit
         missile_board[row][col] = 2  # Mark hit on the missile board
         ship_grid[row][col] = 2  # Mark hit on the player's ship grid
+        pygame.time.wait(200) 
+        hit_sound.play()
+        pygame.time.wait(500)
 
         for ship in ship_list:
             if (row, col) in ship['coordinates']:
@@ -212,15 +216,13 @@ def check_hit(ship_grid, missile_board, row, col, ship_list):
                     for (r, c) in ship['coordinates']:
                         missile_board[r][c] = 3  # Mark the ship as sunk on the missile board
                         ship_grid[r][c] = 3  # Mark the ship as sunk on the player's ship grid
-        pygame.time.wait(500) 
-        hit_sound.play()
-        pygame.time.wait(1000)
+                        sunk.play()
         return True  # A valid shot was made
     else:
         missile_board[row][col] = 1  # Mark miss on the missile board
-        pygame.time.wait(500) 
+        pygame.time.wait(200) 
         miss_sound.play()
-        pygame.time.wait(1000)
+        pygame.time.wait(500)
     return True  # Return True since it was a valid shot
 
 
@@ -255,10 +257,6 @@ def main_menu():
                     break
 
     return selected_ships
-
-def all_ships_sunk(ship_list):
-    """Check if all ships in the list are sunk."""
-    return all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)
 
 def display_winner(winner):
     """Display the winner and wait for user input to close the game."""
@@ -308,7 +306,6 @@ def all_ships_sunk(ship_list):
 def display_winner(winner):
     """Display the winner and wait for user input to close the game."""
     win.fill(BLACK)
-    win_sound.play()
     draw_text(f"Player {winner} Wins!", WIDTH // 2 , HEIGHT // 2 - 50)
     draw_text("Press ENTER to exit", WIDTH // 2 , HEIGHT // 2 + 50)
     pygame.display.flip()
@@ -380,6 +377,7 @@ def game_loop():
     # Main game loop after ship placement
     running = True
     turn = 1  # Player 1 starts
+
     while running:
         win.fill(BLACK)
         
@@ -411,12 +409,13 @@ def game_loop():
                     # Check if Player 1 clicks on the missile board area
                     if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and 
                         MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE):
+                        shot.play()
                         row = (mouse_y - MARGIN) // CELL_SIZE
                         col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE
-                        shot.play()
                         if check_hit(grid2, missile_board1, row, col, player2_ships):
                             # Check if Player 1 has won
                             if all_ships_sunk(player2_ships):
+                                win_sound.play()
                                 display_winner(1)  # Player 1 wins
                                 running = False
                             else:
@@ -427,12 +426,13 @@ def game_loop():
                     # Check if Player 2 clicks on the missile board area
                     if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and 
                         MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE):
+                        shot.play()
                         row = (mouse_y - MARGIN) // CELL_SIZE
                         col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE
-                        shot.play()
                         if check_hit(grid1, missile_board2, row, col, player1_ships):
                             # Check if Player 2 has won
                             if all_ships_sunk(player1_ships):
+                                win_sound.play()
                                 display_winner(2)  # Player 2 wins
                                 running = False
                             else:
