@@ -344,7 +344,7 @@ def instructions_page():
         draw_text("- Blue: Sunk friendly ship", WIDTH // 1.5 +70, 600)
 
 
-        draw_text("Press ENTER to continue...", WIDTH // 1.5 +70, HEIGHT - 100)
+        draw_text("Press ENTER to continue...", WIDTH // 1.5 +70, 700)
 
         pygame.display.flip()
 
