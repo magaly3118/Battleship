@@ -69,8 +69,11 @@ font = pygame.font.Font(None, 36) #Setting the font for text in the game
 
 def draw_grid(grid, x_offset, y_offset, player_grid=True, ghost_positions=None):
     """Draw the game grid, including ships, hits, misses, and ghost ship if present."""
+    
     for row in range(GRID_SIZE):
+        draw_text(str(row), x_offset-20, y_offset + row * CELL_SIZE + (CELL_SIZE / 4)) # Draws row label
         for col in range(GRID_SIZE):
+            draw_text(chr(65+col), x_offset + col * CELL_SIZE + (CELL_SIZE / 3), y_offset-25) # Draws col label
             color = WHITE #Default color before hit/miss or a ship is white
             if player_grid:  # For the player's own grid
                 if grid[row][col] == 1:  # Placeholder, would color black for ships, but we filled in with png instead below
@@ -359,16 +362,16 @@ def game_loop():
         if turn == 1:
             # Display Player 1's missile board (targeting Player 2's ships)
 
-            draw_text("Your Ships", MARGIN + 100, MARGIN - 40)  # Above Player 1's ship grid
-            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 40)  # Above Player 1's missile board
+            draw_text("Your Ships", MARGIN + 100, MARGIN - 50)  # Above Player 1's ship grid
+            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 50)  # Above Player 1's missile board
             draw_text("Player 1's Turn", WIDTH // 2 - 130, 20)
             draw_grid(missile_board1, WIDTH // 2 + MARGIN, MARGIN, player_grid=False)
             # Display Player 1's own ship grid with hits and sunk ships
             draw_grid(grid1, MARGIN, MARGIN, player_grid=True)
         else:
             # Display Player 2's missile board (targeting Player 1's ships)
-            draw_text("Your Ships", MARGIN + 100, MARGIN - 40)  # Above Player 2's ship grid
-            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 40)  # Above Player 2's missile board
+            draw_text("Your Ships", MARGIN + 100, MARGIN - 50)  # Above Player 2's ship grid
+            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 50)  # Above Player 2's missile board
             draw_text("Player 2's Turn", WIDTH // 2 - 130, 20)
             draw_grid(missile_board2, WIDTH // 2 + MARGIN, MARGIN, player_grid=False)
             # Display Player 2's own ship grid with hits and sunk ships
