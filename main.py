@@ -2,11 +2,13 @@
 
 Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
+Updated by: Matthew McManness [2210261], Manvir Kaur [], Magaly Comacho [], Mariam Oraby [], Shravya Matta []
 Date Created: 09/09/24
-Date Last Modified: 09/15/24
+Date Last Modified: 09/19/24
 
 Program Tile: Battleship
 Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
+Update Description: Added 3 AI difficulties and a persistant scoreboard.
 
 Sources: YouTube, ChatGPT
 Inputs:User mouse/key inputs
@@ -15,6 +17,7 @@ Output:Game screen
 """
 # Import modules
 import pygame
+import random
 
 # Initialize pygame
 pygame.init() 
@@ -66,6 +69,172 @@ missile_board2 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Pl
 default_ships = [1, 2, 3, 4, 5]
 
 font = pygame.font.Font(None, 36) #Setting the font for text in the game
+
+# New Functions:
+
+def select_game_mode():
+
+    # present a menu to select between pass and play mode or AI mode.
+    # Returns a string (either "pass_and_play" or "AI")
+    game_mode = "pass_and_play" # Default
+    menu_running = True
+
+    while menu_running:
+        win.fill(BLACK)
+
+        # Display menu options:
+        draw_text("Select Game Mode", WIDTH // 2 - 150, HEIGHT // 2 - 100)
+        draw_text(f"Current selection: {game_mode}", WIDTH // 2 - 100, HEIGHT // 2)
+        draw_text("Use LEFT/RIGHT arrows to change mode", WIDTH // 2 - 200, HEIGHT // 2 + 50)
+        draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                        # Toggle between 'pass_and_play' and 'AI'
+                        if game_mode == "pass_and_play":
+                            game_mode = "AI"
+                        else:
+                            game_mode = "pass_and_play"
+
+                    if event.key == pygame.K_RETURN:
+                        # Confirm selection and exit menu
+                        menu_running = False
+
+    return game_mode
+
+def select_ai_difficulty():
+
+    # Presents a menu to select the AI Level
+    # Returns: A string indicating the AI difficulty ("easy", "medium", "hard")
+
+    ai_difficulty = "easy"  # Default
+    menu_running = True
+
+    while menu_running:
+        win.fill(BLACK)
+
+        # Display the difficulty selection menu
+        draw_text("Select AI Difficulty", WIDTH // 2 - 150, HEIGHT // 2 - 100)
+        draw_text(f"Current selection: {ai_difficulty}", WIDTH // 2 - 100, HEIGHT // 2)
+        draw_text("Use LEFT/RIGHT arrows to change difficulty", WIDTH // 2 - 200, HEIGHT // 2 + 50)
+        draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100)
+
+        pygame.display.flip()
+
+        # Event handling to change the AI difficulty
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    # Cycle through difficulties: easy -> medium -> hard -> easy
+                    if ai_difficulty == "easy":
+                        ai_difficulty = "medium"
+                    elif ai_difficulty == "medium":
+                        ai_difficulty = "hard"
+                    else:
+                        ai_difficulty = "easy"
+
+                if event.key == pygame.K_RETURN:
+                    # Confirm selection and exit menu
+                    menu_running = False
+
+    return ai_difficulty
+
+def place_ai_ships(grid, ships_to_place, player2_ships):
+    
+    # Automatically places the AI's ships on the grid.
+    # Arguments:
+    #     - grid: The AI's grid where ships will be placed.
+    
+    # Define ship lengths (same as player ships)
+    for ship_len in ships_to_place:
+        placed = False  # Track if the ship was successfully placed
+        while not placed:
+            # Randomly choose orientation ('H' for horizontal, 'V' for vertical)
+            orientation = random.choice(["H", "V"])
+
+            if orientation == "H":
+                # Pick random start position where the ship fits horizontally
+                row = random.randint(0, GRID_SIZE - 1)
+                col = random.randint(0, GRID_SIZE - ship_len)
+            else:
+                # Pick random start position where the ship fits vertically
+                row = random.randint(0, GRID_SIZE - ship_len)
+                col = random.randint(0, GRID_SIZE - 1)
+
+            # Check if the selected area is free to place the ship
+            if check_area_is_free(grid, row, col, ship_len, orientation):
+                # Place the ship on the grid and track it in player2_ships (AI's ships)
+                ship_coordinates = []  # To store the coordinates of the ship
+                place_ship(grid, row, col, ship_len, orientation, player2_ships)
+
+                # After placing, add the ship's coordinates to player2_ships for tracking
+                if orientation == "H":
+                    ship_coordinates = [(row, col + i) for i in range(ship_len)]
+                else:
+                    ship_coordinates = [(row + i, col) for i in range(ship_len)]
+
+                player2_ships.append({
+                    'coordinates': ship_coordinates,
+                    'hits': []  # Initialize an empty hits list for tracking
+                })
+                placed = True
+
+def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
+    
+    # Helper function to check if the area is free to place a ship.
+    # Returns True if the ship can be placed, False if there's an overlap or out of bounds.
+    
+    if orientation == "H":
+        # Check if any of the cells are already occupied
+        for i in range(ship_len):
+            if grid[start_row][start_col + i] != 0:
+                return False
+    else:
+        # Check if any of the cells are already occupied
+        for i in range(ship_len):
+            if grid[start_row + i][start_col] != 0:
+                return False
+
+    return True
+
+# Shravya Matta
+def update_scoreboard(player_hits, player_misses, player, hit):
+     # Add code here
+    return #don't have to return anything just diplay info based on player hits, and player misses arrary
+
+# Shravya Matta
+def display_scoreboard(player_hits, player_misses):
+     # Add code here
+    return #don't have to return anything just diplay info based on player hits, and player misses arrary
+
+# Manvir Kaur  
+def ai_easy_turn(player_grid, missile_board):
+      # Add code here
+      # return row, col #(uncomment this the other return is so that people can test without correct code here)
+    return
+# Magaly Comacho
+def ai_medium_turn(player_grid, missile_board):
+      # Add code here
+      # return row, col #(uncomment this the other return is so that people can test without correct code here)
+    return
+
+# Mariam Oraby
+def ai_hard_turn(player_grid, missile_board):
+      # Add code here
+      # return row, col #(uncomment this the other return is so that people can test without correct code here)
+    return
+
 
 def draw_grid(grid, x_offset, y_offset, player_grid=True, ghost_positions=None):
     """Draw the game grid, including ships, hits, misses, and ghost ship if present."""
@@ -197,32 +366,36 @@ def check_hit(ship_grid, missile_board, row, col, ship_list):
         hit_sound.play()
         ship_grid[row][col] = 2  # Mark hit on the player's ship grid
 
+        # Check if the hit was on a specific ship and append the hit to the ship's 'hits' list
         for ship in ship_list:
             if (row, col) in ship['coordinates']:
-                ship['hits'].append((row, col))  # Record the hit
-                
+                if (row, col) not in ship['hits']:  # Avoid double-counting hits
+                    ship['hits'].append((row, col))
+                    print(f"AI hit registered on Player's ship at {row}, {col}")  # Debug: AI hit
+
                 # Check if the ship is sunk
                 if len(ship['hits']) == len(ship['coordinates']):
+                    print(f"AI sunk Player's ship at {ship['coordinates']}!")  # Debug: AI ship sunk
                     for (r, c) in ship['coordinates']:
                         missile_board[r][c] = 3  # Mark the ship as sunk on the missile board
                         ship_grid[r][c] = 3  # Mark the ship as sunk on the player's ship grid
-                        sunk_sound.play()
-
+                    sunk_sound.play()
         return True  # A valid shot was made
     else:
         missile_board[row][col] = 1  # Mark miss on the missile board
         miss_sound.play()
     return True  # Return True since it was a valid shot
 
-
 def main_menu():
+
+
     """Main menu to select the number of ships."""
     selected_ships = 3 #Default value
     menu_running = True
 
     while menu_running:
         win.fill(BLACK)
-        draw_text("Welcome to 2-Player Battleship", WIDTH // 2 - 150, HEIGHT // 2 - 100) #Just info for users so they know how to use the 
+        draw_text("Welcome to Battleship", WIDTH // 2 - 150, HEIGHT // 2 - 100) #Just info for users so they know how to use the 
         draw_text(f"Number of Ships: {selected_ships}", WIDTH // 2 - 100, HEIGHT // 2)
         draw_text("Use UP and DOWN arrow keys to select the number of ships.", WIDTH // 2 - 300, HEIGHT // 2 + 50)
         draw_text("Press ENTER to start", WIDTH // 2 - 100, HEIGHT // 2 + 200)
@@ -261,10 +434,17 @@ def display_winner(winner):
                 if event.key == pygame.K_RETURN:
                     pygame.quit()
                     quit()
-def display_turn_screen(player_number):
+
+def display_turn_screen(player_number, game_mode=None):
     """Screen in between turns to hide board info from other player."""
+    
+    if game_mode == "AI" and player_number == 2:
+        turn_text = "AI's Turn"
+    else:
+        turn_text = f"Player {player_number}'s Turn"
+    
     win.fill(BLACK)
-    draw_text(f"Player {player_number}'s Turn", WIDTH // 2 - 150, HEIGHT // 2 - 50) #Current players turn, suppose to hand off laptop to them when they get to this screen
+    draw_text(turn_text, WIDTH // 2 - 150, HEIGHT // 2 - 50)  # Display the appropriate turn text
     draw_text("Please wait for the other player to finish their turn.", WIDTH // 2 - 300, HEIGHT // 2 + 10)
     draw_text("Press any key to continue...", WIDTH // 2 - 150, HEIGHT // 2 + 70)
     pygame.display.flip()
@@ -275,9 +455,10 @@ def display_turn_screen(player_number):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.KEYDOWN: #any key is pressed
-                waiting = False #Stop waiting, go onto next turn
+            if event.type == pygame.KEYDOWN:  # any key is pressed
+                waiting = False  # Stop waiting, go on to next turn
                 break
+
 def draw_text(text, x, y):
     """Utility function to draw text on the screen."""
     text_surface = font.render(text, True, WHITE) #White text
@@ -285,7 +466,9 @@ def draw_text(text, x, y):
 
 def all_ships_sunk(ship_list):
     """Check if all ships in the list are sunk."""
-    return all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)#checks if all ships have the same number of hits as they have length, which would mean they are all sunk
+    result = all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)
+    print(f"All ships sunk check: {result}")  # Debug: Win condition check
+    return result
 
 def display_winner(winner):
     """Display the winner and wait for user input to close the game."""
@@ -304,6 +487,7 @@ def display_winner(winner):
                 if event.key == pygame.K_RETURN: #Quit game if they press enter
                     pygame.quit()
                     quit()
+
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
@@ -336,89 +520,120 @@ def instructions_page():
 
 def game_loop():
     """Main game loop where players place ships and play the game."""
-    # Main menu to select the number of ships
-    instructions_page()#Start instructions page
-    num_ships = main_menu()#start main menu, which also grabs our number of ships for the game
+    instructions_page()  # Start instructions page
+    game_mode = select_game_mode()  # Select game mode (AI or pass-and-play)
+    if game_mode == "AI":
+        ai_difficulty = select_ai_difficulty()  # Select AI difficulty
 
-    # Initialize ship lists for both players
+    num_ships = main_menu()  # Select number of ships
     player1_ships = []
     player2_ships = []
-
-    # Ships to place based on the selection
     ships_to_place = default_ships[:num_ships]
 
     # Player 1 places ships
     ship_placement_menu(grid1, 1, player1_ships, ships_to_place)
 
-    # Player 2 places ships
-    ship_placement_menu(grid2, 2, player2_ships, ships_to_place)
+    if game_mode == "pass_and_play":
+        # Player 2 places ships manually
+        ship_placement_menu(grid2, 2, player2_ships, ships_to_place)
+    elif game_mode == "AI":
+        # AI places ships automatically
+        place_ai_ships(grid2, ships_to_place, player2_ships)
 
-    # Main game loop after ship placement
+    # Initialize hit/miss counters
+    player_hits = {1: 0, 2: 0}
+    player_misses = {1: 0, 2: 0}
+
     running = True
     turn = 1  # Player 1 starts
+
     while running:
         win.fill(BLACK)
         
+        # Handle Player 1's turn
         if turn == 1:
-            # Display Player 1's missile board (targeting Player 2's ships)
-
-            draw_text("Your Ships", MARGIN + 100, MARGIN - 50)  # Above Player 1's ship grid
-            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 50)  # Above Player 1's missile board
             draw_text("Player 1's Turn", WIDTH // 2 - 130, 20)
             draw_grid(missile_board1, WIDTH // 2 + MARGIN, MARGIN, player_grid=False)
-            # Display Player 1's own ship grid with hits and sunk ships
             draw_grid(grid1, MARGIN, MARGIN, player_grid=True)
-        else:
-            # Display Player 2's missile board (targeting Player 1's ships)
-            draw_text("Your Ships", MARGIN + 100, MARGIN - 50)  # Above Player 2's ship grid
-            draw_text("Missile Board", WIDTH // 2 + MARGIN + 100, MARGIN - 50)  # Above Player 2's missile board
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:  # Player 1 fires
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and
+                            MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE):
+                        row = (mouse_y - MARGIN) // CELL_SIZE
+                        col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE
+                        if check_hit(grid2, missile_board1, row, col, player2_ships):
+                            update_scoreboard(player_hits, player_misses, 1, True)  # Hit
+                        else:
+                            update_scoreboard(player_hits, player_misses, 1, False)  # Miss
+                        if all_ships_sunk(player2_ships):  # Player 1 wins
+                            win_sound.play()
+                            display_winner(1)
+                            running = False
+                        else:
+                            display_turn_screen(2, game_mode)  # Switch to Player 2
+                            turn = 2
+
+        # Handle Player 2's turn (pass-and-play mode)
+        elif turn == 2 and game_mode == "pass_and_play":
             draw_text("Player 2's Turn", WIDTH // 2 - 130, 20)
             draw_grid(missile_board2, WIDTH // 2 + MARGIN, MARGIN, player_grid=False)
-            # Display Player 2's own ship grid with hits and sunk ships
             draw_grid(grid2, MARGIN, MARGIN, player_grid=True)
+            pygame.display.flip()
 
-        pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:  # Player 2 fires
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and
+                            MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE):
+                        row = (mouse_y - MARGIN) // CELL_SIZE
+                        col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE
+                        if check_hit(grid1, missile_board2, row, col, player1_ships):
+                            update_scoreboard(player_hits, player_misses, 2, True)  # AI Hit
+                        else:
+                            update_scoreboard(player_hits, player_misses, 2, False)  # AI Miss
+                        if all_ships_sunk(player1_ships):  # Player 2 wins
+                            win_sound.play()
+                            display_winner(2)
+                            running = False
+                        else:
+                            display_turn_screen(1, game_mode)  # Switch back to Player 1
+                            turn = 1
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        # Handle AI's turn
+        elif turn == 2 and game_mode == "AI":
+            # AI chooses a move based on difficulty
+            if ai_difficulty == "easy":
+                row, col = ai_easy_turn(grid1, missile_board2)
+            elif ai_difficulty == "medium":
+                row, col = ai_medium_turn(grid1, missile_board2)
+            elif ai_difficulty == "hard":
+                row, col = ai_hard_turn(grid1, missile_board2, player1_ships)
+
+            # AI fires at Player 1's ships
+            if check_hit(grid1, missile_board2, row, col, player1_ships):
+                update_scoreboard(player_hits, player_misses, 2, True)  # AI Hit
+            else:
+                update_scoreboard(player_hits, player_misses, 2, False)  # AI Miss
+            if all_ships_sunk(player1_ships):  # AI wins
+                win_sound.play()
+                print("AI wins!")  # Debug: AI wins
+                display_winner(2)
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:#If they click the mouse
-                mouse_x, mouse_y = pygame.mouse.get_pos()#Gets mouse position
-                if turn == 1: 
-                    # Check if Player 1 clicks on the missile board area
-                    if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and 
-                        MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE): #Checks if where they clicked was on the misisle board area
-                        row = (mouse_y - MARGIN) // CELL_SIZE #Finds row where they clicked
-                        col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE #Finds col where they clicked
-                        if check_hit(grid2, missile_board1, row, col, player2_ships):#If they fired at a valid position
-                            # Check if Player 1 has won
-                            if all_ships_sunk(player2_ships): #If all player 2 ships sunk after player 1 fires
-                                win_sound.play()
-                                display_winner(1)  # Player 1 wins
-                                running = False
-                            else:
-                                # Show screen to switch turns and switch to Player 2
-                                display_turn_screen(2)
-                                turn = 2  # Switch to Player 2
-                elif turn == 2:
-                    # Check if Player 2 clicks on the missile board area
-                    if (WIDTH // 2 + MARGIN < mouse_x < WIDTH // 2 + MARGIN + GRID_SIZE * CELL_SIZE and 
-                        MARGIN < mouse_y < MARGIN + GRID_SIZE * CELL_SIZE): #Checks if where they clicked was in the missile board area
-                        row = (mouse_y - MARGIN) // CELL_SIZE #Finds row where they clicked
-                        col = (mouse_x - (WIDTH // 2 + MARGIN)) // CELL_SIZE #Finds col where they clicked
-                        if check_hit(grid1, missile_board2, row, col, player1_ships): #If they fired at a valid position
-                            # Check if Player 2 has won
-                            if all_ships_sunk(player1_ships):
-                                win_sound.play()
-                                display_winner(2)  # Player 2 wins
-                                running = False
-                            else:
-                                # Show screen to switch turns and switch to Player 1
-                                display_turn_screen(1)
-                                turn = 1  # Switch to Player 1
+            else:
+                display_turn_screen(1)  # Switch back to Player 1
+                turn = 1
+
+        # display scoreboard
+        display_scoreboard(player_hits, player_misses)
 
     pygame.quit()
-
 
 
 if __name__ == "__main__":
