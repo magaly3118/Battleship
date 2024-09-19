@@ -221,17 +221,20 @@ def display_scoreboard(player_hits, player_misses):
 # Manvir Kaur  
 def ai_easy_turn(player_grid, missile_board):
       # Add code here
+      # code should select the row and column to be attacked
       # return row, col #(uncomment this the other return is so that people can test without correct code here)
     return
 # Magaly Comacho
 def ai_medium_turn(player_grid, missile_board):
       # Add code here
+      # code should select the row and column to be attacked
       # return row, col #(uncomment this the other return is so that people can test without correct code here)
     return
 
 # Mariam Oraby
 def ai_hard_turn(player_grid, missile_board):
       # Add code here
+      # code should select the row and column to be attacked
       # return row, col #(uncomment this the other return is so that people can test without correct code here)
     return
 
