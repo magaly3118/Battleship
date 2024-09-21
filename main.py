@@ -2,7 +2,7 @@
 
 Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
-Updated by: Matthew McManness [2210261], Manvir Kaur [], Magaly Comacho [], Mariam Oraby [], Shravya Matta []
+Updated by: Matthew McManness [2210261], Manvir Kaur [], Magaly Comacho [], Mariam Oraby [3127776], Shravya Matta []
 Date Created: 09/09/24
 Date Last Modified: 09/19/24
 
