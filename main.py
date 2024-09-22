@@ -2,7 +2,7 @@
 
 Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
-Updated by: Matthew McManness [2210261], Manvir Kaur [], Magaly Comacho [], Mariam Oraby [3127776], Shravya Matta []
+Updated by: Matthew McManness [2210261], Manvir Kaur [3064194], Magaly Comacho [], Mariam Oraby [3127776], Shravya Matta []
 Date Created: 09/09/24
 Date Last Modified: 09/19/24
 
@@ -220,10 +220,19 @@ def display_scoreboard(player_hits, player_misses):
 
 # Manvir Kaur  
 def ai_easy_turn(player_grid, missile_board):
-      # Add code here
-      # code should select the row and column to be attacked
-      # return row, col #(uncomment this the other return is so that people can test without correct code here)
-    return
+    # Keep choosing random cells until a valid (not previously fired at) cell is found
+    valid_shot = False
+    while not valid_shot:
+        row = random.randint(0, GRID_SIZE - 1)
+        col = random.randint(0, GRID_SIZE - 1)
+        
+        if missile_board[row][col] == 0:  # 0 means no shot has been fired at this cell
+            valid_shot = True  # A valid cell was found
+
+    # Now the AI fires at this cell
+    return row, col
+
+
 # Magaly Comacho
 def ai_medium_turn(player_grid, missile_board):
       # Add code here
@@ -326,7 +335,7 @@ def ship_placement_menu(player_grid, player_number, ship_list, ships_to_place):
 
     while placing_ships: #While player is still in the process of placing ships
         win.fill(BLACK) 
-        draw_text(f"Player {player_number}: Place your ships", WIDTH // 2 - 100, 50) #WHich player is placing ships
+        draw_text(f"Player {player_number}: Place your ships", WIDTH // 2 - 100, 50) #Which player is placing ships
         draw_text(f"Current ship length: {ships_to_place[ship_idx]}", WIDTH // 2 - 100, 100) #Displays current ship length
         draw_text("Press 'H' for Horizontal, 'V' for Vertical", WIDTH // 2 - 100, 150) #Displays info for player so they know what to press to change orientation
 
