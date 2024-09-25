@@ -2,17 +2,17 @@
 
 Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [2791182], Mikaela Navarro [2998217], Andrew Vanderwerf [3075534]
 
-Updated by: Matthew McManness [2210261], Manvir Kaur [3064194], Magaly Comacho [], Mariam Oraby [3127776], Shravya Matta []
+Updated by: Matthew McManness [2210261], Manvir Kaur [3064194], Magaly Camacho [3072618], Mariam Oraby [3127776], Shravya Matta []
 Date Created: 09/09/24
-Date Last Modified: 09/19/24
+Date Last Modified: 09/23/24
 
 Program Tile: Battleship
 Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
 Update Description: Added 3 AI difficulties and a persistant scoreboard.
 
 Sources: YouTube, ChatGPT
-Inputs:User mouse/key inputs
-Output:Game screen
+Inputs: User mouse/key inputs
+Output: Game screen
 
 """
 # Import modules
@@ -233,12 +233,92 @@ def ai_easy_turn(player_grid, missile_board):
     return row, col
 
 
-# Magaly Comacho
-def ai_medium_turn(player_grid, missile_board):
-      # Add code here
-      # code should select the row and column to be attacked
-      # return row, col #(uncomment this the other return is so that people can test without correct code here)
-    return
+# Magaly Camacho
+def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tiles:list[dict]) -> list[int]:
+    """Returns row and col to attack, if a ship has been previously hit then it attacks tiles near it, otherwise it attacks a random tile"""
+    # helpers
+    tile_not_found = True # if tile to hit has been found or not
+    dir_shifts = {
+        "Right": [0,1], 
+        "Left": [0,-1], 
+        "Up": [-1,0], 
+        "Down": [1,0]
+    } # [y,x] shifts based on direction
+    print("-------------------------------------------------------------------------------------------")
+    print(f"\tAI MED: tiles previously hit:", ship_hit_tiles)
+    
+    # first check around previously hit tiles
+    for index, tile in enumerate(ship_hit_tiles):
+        # if tile is part of sunk ship
+        if player_grid[tile["x"]][tile["y"]] == 3:
+            ship_hit_tiles.pop(index) # remove from list
+            print(f"\tAI MED: tile ({tile["x"]}, {tile["y"]}) part of sunk ship")
+            continue # move on to next tile
+
+        # otherwise check directions around that tile
+        for dir, check in tile["dirs"].items():
+            # if direction dir isn't a dead-end, look in that direction
+            if check and tile_not_found:
+                print(f"\tAI MED: checking relative to tile ({tile["x"]}, {tile["y"]}) in direction {dir}")
+                shift = dir_shifts[dir] # get shift for direction
+                temp_row, temp_col = tile["x"], tile["y"] # start at previously hit tile
+
+                # look for new tile in direction dir
+                while True:
+                    temp_row += shift[0]
+                    temp_col += shift[1]
+                    print(f"AI MED: checking tile ({temp_row}, {temp_col})", end="")
+
+                    # if temp tile is out of bounds, stop checking in that direction
+                    if temp_row < 0 or temp_row >= GRID_SIZE or temp_col < 0 or temp_col >= GRID_SIZE:
+                        tile["dirs"][dir] = False
+                        print("-- out of bounds")
+                        break
+                    
+                    # get tile state
+                    tile_state = missile_board[temp_row][temp_col]
+
+                    # if tile hasn't been hit before, hit it
+                    if tile_state == 0:
+                        row, col = temp_row, temp_col
+                        tile_not_found = False
+                        print("-- hit next")
+                        break
+
+                    # if tile was a miss, stop looking in that direction
+                    elif tile_state == 1:
+                        tile["dirs"][dir] = False
+                        print("-- stop looking")
+                        break
+
+    # look for a random tile 
+    if tile_not_found:
+        print(f"\tAI MED: now looking for random tile", end="")
+        while True: 
+            row = random.randint(0, GRID_SIZE - 1)
+            col = random.randint(0, GRID_SIZE - 1)
+
+            # if tile hasn't been attacked before, ai will hit it
+            if missile_board[row][col] == 0:
+                print(f"-- found at ({row}, {col})")
+                break
+
+    # check if there's a ship to attack at [row, col], if so save tile
+    if player_grid[row][col] == 1:
+        print(f"\tAI MED: tile to hit has ship")
+        tile = {
+            "x": row,
+            "y": col,
+            "dirs": {
+                "Up": True,
+                "Down": True,
+                "Left": True,
+                "Right": True
+            } # directions to look in relative to tile, False=dead-end, True=keep looking
+        }
+        ship_hit_tiles.append(tile) 
+
+    return row, col # return tile coords to attack
 
 # Mariam Oraby
 def ai_hard_turn(player_grid, missile_board):
@@ -556,6 +636,9 @@ def game_loop():
     player_hits = {1: 0, 2: 0}
     player_misses = {1: 0, 2: 0}
 
+    # For Medium AI, tracks tiles where ships have been hit
+    ai_med_ship_hit_tiles = [] 
+
     running = True
     turn = 1  # Player 1 starts
 
@@ -624,7 +707,7 @@ def game_loop():
             if ai_difficulty == "easy":
                 row, col = ai_easy_turn(grid1, missile_board2)
             elif ai_difficulty == "medium":
-                row, col = ai_medium_turn(grid1, missile_board2)
+                row, col = ai_medium_turn(grid1, missile_board2, ai_med_ship_hit_tiles)
             elif ai_difficulty == "hard":
                 row, col = ai_hard_turn(grid1, missile_board2, player1_ships)
 
