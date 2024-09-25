@@ -244,22 +244,18 @@ def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tile
         "Up": [-1,0], 
         "Down": [1,0]
     } # [y,x] shifts based on direction
-    print("-------------------------------------------------------------------------------------------")
-    print(f"\tAI MED: tiles previously hit:", ship_hit_tiles)
     
     # first check around previously hit tiles
     for index, tile in enumerate(ship_hit_tiles):
         # if tile is part of sunk ship
         if player_grid[tile["x"]][tile["y"]] == 3:
             ship_hit_tiles.pop(index) # remove from list
-            print(f"\tAI MED: tile ({tile["x"]}, {tile["y"]}) part of sunk ship")
             continue # move on to next tile
 
         # otherwise check directions around that tile
         for dir, check in tile["dirs"].items():
             # if direction dir isn't a dead-end, look in that direction
             if check and tile_not_found:
-                print(f"\tAI MED: checking relative to tile ({tile["x"]}, {tile["y"]}) in direction {dir}")
                 shift = dir_shifts[dir] # get shift for direction
                 temp_row, temp_col = tile["x"], tile["y"] # start at previously hit tile
 
@@ -267,12 +263,10 @@ def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tile
                 while True:
                     temp_row += shift[0]
                     temp_col += shift[1]
-                    print(f"AI MED: checking tile ({temp_row}, {temp_col})", end="")
 
                     # if temp tile is out of bounds, stop checking in that direction
                     if temp_row < 0 or temp_row >= GRID_SIZE or temp_col < 0 or temp_col >= GRID_SIZE:
                         tile["dirs"][dir] = False
-                        print("-- out of bounds")
                         break
                     
                     # get tile state
@@ -282,30 +276,25 @@ def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tile
                     if tile_state == 0:
                         row, col = temp_row, temp_col
                         tile_not_found = False
-                        print("-- hit next")
                         break
 
                     # if tile was a miss, stop looking in that direction
                     elif tile_state == 1:
                         tile["dirs"][dir] = False
-                        print("-- stop looking")
                         break
 
     # look for a random tile 
     if tile_not_found:
-        print(f"\tAI MED: now looking for random tile", end="")
         while True: 
             row = random.randint(0, GRID_SIZE - 1)
             col = random.randint(0, GRID_SIZE - 1)
 
             # if tile hasn't been attacked before, ai will hit it
             if missile_board[row][col] == 0:
-                print(f"-- found at ({row}, {col})")
                 break
 
     # check if there's a ship to attack at [row, col], if so save tile
     if player_grid[row][col] == 1:
-        print(f"\tAI MED: tile to hit has ship")
         tile = {
             "x": row,
             "y": col,
