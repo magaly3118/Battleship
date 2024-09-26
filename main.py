@@ -306,14 +306,29 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
 
 # Shravya Matta
 def update_scoreboard(player_hits, player_misses, player, hit):
-     # Add code here to update player score
-    return #don't have to return anything just diplay info based on player hits, and player misses arrary
+    # Update the scoreboard based on hits and misses for the player
+    return
+   
 
 # Shravya Matta
-def display_scoreboard(player_score_1, player_score_2):
-     # Add code here
-     
-    return 
+def display_scoreboard(player_hits, player_misses):
+    # Clear the screen before drawing the scoreboard
+
+    # Ensure that scores below zero display as zero
+    
+
+    # Display player 1's stats
+        
+    # Display player 2's stats
+    
+    # Display a message to instruct the player to click to continue
+    
+
+    # Update the display with the new scoreboard
+
+    # Wait for a mouse click or key press to continue
+    return
+    
 
 # Matthew McManness
 def display_leaderboard():
@@ -647,23 +662,32 @@ def main_menu():
 
     return selected_ships #Return number of ships to use in game
 
-def display_winner(winner):
-    """Display the winner and wait for user input to close the game."""
+def display_winner(winner, game_mode):
+    # Display the winner and wait for user input. Only add score if a human player wins
     win.fill(BLACK)
-    draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50) #Displays which player won
-    draw_text("Press ENTER to exit", WIDTH // 2 - 100, HEIGHT // 2 + 50) #Enter to quit game
+    if winner == 2 and game_mode == "AI":
+        draw_text("AI Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50)  # Display "AI Wins"
+        draw_text("Press ENTER to continue", WIDTH // 2 - 100, HEIGHT // 2 + 50)
+    else:
+        draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50)  # Display player winner
+        draw_text("Press ENTER to add your score", WIDTH // 2 - 100, HEIGHT // 2 + 50)
+
     pygame.display.flip()
 
-    waiting_for_input = True #waiting for user input
-    while waiting_for_input:
+    if winner == 1 or (winner == 2 and game_mode != "AI"):
+        score = player_score_1 if winner == 1 else player_score_2  # Determine correct score
+
+    waiting_for_input = True
+    while waiting_for_input:  # Wait for keyboard input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.KEYDOWN: #If player presses enter, quit the game
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    pygame.quit()
-                    quit()
+                    if winner == 1 or (winner == 2 and game_mode != "AI"):
+                        add_score_to_leaderboard(score)  # Only add human player's score
+                    waiting_for_input = False  # Exit the loop after adding score or skipping
 
 def display_turn_screen(player_number, game_mode=None):
     """Screen in between turns to hide board info from other player."""
@@ -700,7 +724,7 @@ def all_ships_sunk(ship_list):
     print(f"All ships sunk check: {result}")  # Debug: Win condition check
     return result
 
-def display_winner(winner):
+def display_winner(winner, game_mode):
     """Display the winner and wait for user input to close the game."""
     win.fill(BLACK)
     draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50) #Winning player 
@@ -811,10 +835,11 @@ def game_loop():
                             update_scoreboard(player_hits, player_misses, 1, False)  # Miss
                         if all_ships_sunk(player2_ships):  # Player 1 wins
                             win_sound.play()
-                            display_winner(1)
+                            display_winner(1, game_mode)
                             running = False
                         else:
                             display_turn_screen(2, game_mode)  # Switch to Player 2
+                            display_scoreboard(player_hits, player_misses)
                             turn = 2
 
         # Handle Player 2's turn (pass-and-play mode)
@@ -839,10 +864,11 @@ def game_loop():
                             update_scoreboard(player_hits, player_misses, 2, False)  # AI Miss
                         if all_ships_sunk(player1_ships):  # Player 2 wins
                             win_sound.play()
-                            display_winner(2)
+                            display_winner(2, game_mode)
                             running = False
                         else:
                             display_turn_screen(1, game_mode)  # Switch back to Player 1
+                            display_scoreboard(player_hits, player_misses)
                             turn = 1
 
         # Handle AI's turn
@@ -863,14 +889,12 @@ def game_loop():
             if all_ships_sunk(player1_ships):  # AI wins
                 win_sound.play()
                 print("AI wins!")  # Debug: AI wins
-                display_winner(2)
+                display_winner(2, game_mode)
                 running = False
             else:
                 display_turn_screen(1)  # Switch back to Player 1
+                display_scoreboard(player_hits, player_misses)
                 turn = 1
-
-        # display scoreboard
-        display_scoreboard(player_hits, player_misses)
 
     pygame.quit()
 
