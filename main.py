@@ -18,6 +18,8 @@ Output: Game screen
 # Import modules
 import pygame
 import random
+import os
+import json
 
 # Initialize pygame
 pygame.init() 
@@ -64,6 +66,8 @@ grid1 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 1 sh
 missile_board1 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 1 missile grid
 grid2 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 2 ship grid
 missile_board2 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 2 missile grid
+player_score_1 = 0
+player_score_2 = 0
 
 # Default ship lengths
 default_ships = [1, 2, 3, 4, 5]
@@ -71,6 +75,98 @@ default_ships = [1, 2, 3, 4, 5]
 font = pygame.font.Font(None, 36) #Setting the font for text in the game
 
 # New Functions:
+
+def display_menu():
+    # Default selection
+    menu_selection = "Leaderboard"
+    menu_running = True
+
+    while menu_running:
+        win.fill(BLACK)
+
+        # Display menu options
+        draw_text("Main Menu", WIDTH // 2 - 100, HEIGHT // 2 - 100)
+        draw_text(f"Current selection: {menu_selection}", WIDTH // 2 - 150, HEIGHT // 2)
+        draw_text("Use LEFT/RIGHT arrows to change selection", WIDTH // 2 - 200, HEIGHT // 2 + 50)
+        draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    # Toggle between 'Leaderboard' and 'Game'
+                    if menu_selection == "Leaderboard":
+                        menu_selection = "Game"
+                    else:
+                        menu_selection = "Leaderboard"
+
+                if event.key == pygame.K_RETURN:
+                    # Confirm selection and exit menu
+                    if menu_selection == "Leaderboard":
+                        display_leaderboard()  # Call the leaderboard function
+                    # Exit menu and continue to the game
+                    menu_running = False
+
+def add_score_to_leaderboard(player_score):
+    player_name = ""  # To store the player's name input
+    name_entered = False
+    input_active = True
+
+    while input_active:
+        win.fill(BLACK)
+        
+        # Display instructions and current input
+        draw_text("Enter your name: " + player_name, WIDTH // 2 - 150, HEIGHT // 2 - 50)
+        draw_text("Press ENTER to submit", WIDTH // 2 - 150, HEIGHT // 2 + 50)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    name_entered = True  # Finish name input
+                    input_active = False
+
+                elif event.key == pygame.K_BACKSPACE:
+                    # Remove the last character from the name
+                    player_name = player_name[:-1]
+                else:
+                    # Add the pressed key to the player_name string
+                    player_name += event.unicode
+
+    # Once name is entered, proceed to save the score
+    if name_entered:
+        # Assuming leaderboard is stored as a list of dictionaries in a file or a global list
+        leaderboard = []  # Load existing leaderboard data from a file or global variable
+
+        try:
+            # Open the leaderboard file and load the existing scores (JSON format for simplicity)
+            with open("leaderboard.json", "r") as f:
+                leaderboard = json.load(f)
+        except FileNotFoundError:
+            # If no leaderboard exists, start with an empty list
+            leaderboard = []
+
+        # Add the new score to the leaderboard
+        new_entry = {"name": player_name, "score": player_score}
+        leaderboard.append(new_entry)
+
+        # Sort the leaderboard by score in descending order (highest scores first)
+        leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
+
+        # Save the updated leaderboard back to the file
+        with open("leaderboard.json", "w") as f:
+            json.dump(leaderboard, f)
+
+        print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
 
 def select_game_mode():
 
@@ -210,13 +306,66 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
 
 # Shravya Matta
 def update_scoreboard(player_hits, player_misses, player, hit):
-     # Add code here
+     # Add code here to update player score
     return #don't have to return anything just diplay info based on player hits, and player misses arrary
 
 # Shravya Matta
-def display_scoreboard(player_hits, player_misses):
+def display_scoreboard(player_score_1, player_score_2):
      # Add code here
-    return #don't have to return anything just diplay info based on player hits, and player misses arrary
+     
+    return 
+
+# Matthew McManness
+def display_leaderboard():
+    # Display the leaderboard, or show a blank menu if no file exists
+    leaderboard = []
+    leaderboard_file = "leaderboard.json"
+
+    # Check if the leaderboard file exists
+    if os.path.exists(leaderboard_file):
+        # Load the leaderboard data from the file
+        try:
+            with open(leaderboard_file, "r") as f:
+                leaderboard = json.load(f)
+        except json.JSONDecodeError:
+            # If the file exists but is corrupted or empty, set an empty leaderboard
+            leaderboard = []
+    else:
+        # No file exists, so start with an empty leaderboard
+        leaderboard = []
+
+    # Display the leaderboard on the screen
+    win.fill(BLACK)
+
+    if leaderboard:
+        # Sort the leaderboard in descending order by score
+        leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
+
+        draw_text("Leaderboard", WIDTH // 2 - 100, HEIGHT // 2 - 150)
+
+        # Display the top 5 players (or fewer if there aren't that many)
+        for index, entry in enumerate(leaderboard[:5]):
+            name = entry["name"]
+            score = entry["score"]
+            draw_text(f"{index + 1}. {name}: {score}", WIDTH // 2 - 100, HEIGHT // 2 - 50 + index * 30)
+
+    else:
+        # If no leaderboard data exists, display a blank message
+        draw_text("Leaderboard is empty", WIDTH // 2 - 100, HEIGHT // 2)
+
+    draw_text("Press ENTER to return to the main menu", WIDTH // 2 - 100, HEIGHT // 2 + 150)
+    pygame.display.flip()
+
+    # Wait for the user to press ENTER to go back to the menu
+    waiting_for_input = True
+    while waiting_for_input:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Return to main menu on ENTER
+                    waiting_for_input = False
 
 # Manvir Kaur  
 def ai_easy_turn(player_grid, missile_board):
@@ -555,20 +704,25 @@ def display_winner(winner):
     """Display the winner and wait for user input to close the game."""
     win.fill(BLACK)
     draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50) #Winning player 
-    draw_text("Press ENTER to exit", WIDTH // 2 - 100, HEIGHT // 2 + 50) 
+    draw_text("Press ENTER to add your score", WIDTH // 2 - 100, HEIGHT // 2 + 50)
     pygame.display.flip()
 
+# Determine the score to add to the leaderboard based on who won
+    if winner == 1:
+        score = player_score_1
+    elif winner == 2:
+        score = player_score_2
+
     waiting_for_input = True
-    while waiting_for_input: #While waiting for keyboard input
+    while waiting_for_input:  # Wait for keyboard input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN: #Quit game if they press enter
-                    pygame.quit()
-                    quit()
-
+                if event.key == pygame.K_RETURN:  # Call add_score_to_leaderboard() when ENTER is pressed
+                    add_score_to_leaderboard(score)  # Add the correct player's score
+                    waiting_for_input = False  # Exit the loop after adding score
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
@@ -602,6 +756,7 @@ def instructions_page():
 def game_loop():
     """Main game loop where players place ships and play the game."""
     instructions_page()  # Start instructions page
+    display_menu()  # Call the menu function before starting the game loop
     game_mode = select_game_mode()  # Select game mode (AI or pass-and-play)
     if game_mode == "AI":
         ai_difficulty = select_ai_difficulty()  # Select AI difficulty
