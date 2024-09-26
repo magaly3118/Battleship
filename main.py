@@ -460,10 +460,27 @@ def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tile
 
 # Mariam Oraby
 def ai_hard_turn(player_grid, missile_board):
-      # Add code here
-      # code should select the row and column to be attacked
-      # return row, col #(uncomment this the other return is so that people can test without correct code here)
-    return
+    """
+    AI 'hard' difficulty function.
+    Knows the player's ships' locations and targets them.
+    Returns the row and column that it hit.
+    """
+    # List of valid targets (ships that haven't been hit)
+    possible_targets = []
+
+    for row in range(len(player_grid)):
+        for col in range(len(player_grid[row])):
+            if player_grid[row][col] == 1 and missile_grid[row][col] == 0:
+                # A ship is present and hasn't been hit yet
+                possible_targets.append((row, col))
+
+    if possible_targets:
+        # AI chooses one of the remaining ship locations to hit
+        row, col = random.choice(possible_targets)
+        missile_grid[row][col] = 1  # Mark this location as fired
+        return row, col
+    else:
+        return None  # No more targets to hit
 
 
 def draw_grid(grid, x_offset, y_offset, player_grid=True, ghost_positions=None):
@@ -853,7 +870,7 @@ def game_loop():
             elif ai_difficulty == "medium":
                 row, col = ai_medium_turn(grid1, missile_board2, ai_med_ship_hit_tiles)
             elif ai_difficulty == "hard":
-                row, col = ai_hard_turn(grid1, missile_board2, player1_ships)
+                row, col = ai_hard_turn(grid1, missile_board2)
 
             # AI fires at Player 1's ships
             if check_hit(grid1, missile_board2, row, col, player1_ships):
