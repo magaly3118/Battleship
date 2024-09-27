@@ -34,8 +34,7 @@ class Scoreboard:
                 if event.type == pygame.KEYDOWN:
                     waiting = False
 
-    def   
- toggle_display(self):
+    def toggle_display(self):
         self.display = not self.display
 
 # Usage:
