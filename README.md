@@ -45,3 +45,24 @@ When one player has sunk the other's entire fleet of ships, the game ends.
 `main_.py` (not to be confused with `main.py`) is a "test" file that was used during initial development for experimental features.
 
 Effectively, it was a separate branch intended to be merged into the main branch when ready.
+
+# Score Board Implementation:
+
+The Game gives players a hundred points when they hit a ship and subtracts 1 point when a player misses.  Scores are only entered to the leaderboard by the winner of a game.
+
+# Version History
+
+1.1 --  Refactored code to accomadate new AI menu and added AI ship placement, empty functions for future AI and Score features 
+Clarified Code Comments
+
+1.3 -- Impelemented Easy AI that randomly attacks unshot at tiles 
+Clarified Code Comments
+
+1.5 -- Impelemented Medium AI that randomly attacks until it hits a ship and then checks the tiles around a hit to better target large ships
+Clarified Code Comments
+
+1.7  -- Implemented simple leaderboard to test functionality
+Clarified Code Comments
+
+1.8 -- Implemented Hard AI that targets player 1's ships directly to play perfect games.
+Clarified Code Comments

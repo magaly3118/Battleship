@@ -14,7 +14,7 @@ Sources: YouTube, ChatGPT
 Inputs: User mouse/key inputs
 Output: Game screen
 
-"""
+""" 
 # Import modules
 import pygame
 import random
@@ -485,14 +485,14 @@ def ai_hard_turn(player_grid, missile_board):
 
     for row in range(len(player_grid)):
         for col in range(len(player_grid[row])):
-            if player_grid[row][col] == 1 and missile_grid[row][col] == 0:
+            if player_grid[row][col] == 1 and missile_board[row][col] == 0:
                 # A ship is present and hasn't been hit yet
                 possible_targets.append((row, col))
 
     if possible_targets:
         # AI chooses one of the remaining ship locations to hit
         row, col = random.choice(possible_targets)
-        missile_grid[row][col] = 1  # Mark this location as fired
+        missile_board[row][col] = 1  # Mark this location as fired
         return row, col
     else:
         return None  # No more targets to hit
@@ -764,6 +764,7 @@ def display_winner(winner, game_mode):
                 if event.key == pygame.K_RETURN:  # Call add_score_to_leaderboard() when ENTER is pressed
                     add_score_to_leaderboard(score)  # Add the correct player's score
                     waiting_for_input = False  # Exit the loop after adding score
+                    
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
