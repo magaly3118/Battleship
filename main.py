@@ -474,28 +474,43 @@ def ai_medium_turn(player_grid:list[int], missile_board:list[int], ship_hit_tile
     return row, col # return tile coords to attack
 
 # Mariam Oraby
-def ai_hard_turn(player_grid, missile_board):
+def ai_hard_turn(player_grid, missile_board, player1_ships):
     """
     AI 'hard' difficulty function.
-    Knows the player's ships' locations and targets them.
-    Returns the row and column that it hit.
+    Targets unhit ships and updates the game board accordingly.
+    Returns the row and column that it hit, and a boolean indicating if the game is over.
     """
-    # List of valid targets (ships that haven't been hit)
-    possible_targets = []
-
+    # Check for any unhit ships and target them
     for row in range(len(player_grid)):
         for col in range(len(player_grid[row])):
+            print(f"Checking position {row},{col} on player grid... Ship present: {player_grid[row][col]}, Missile board status: {missile_board[row][col]}")
+            
+            # Target unhit ship
             if player_grid[row][col] == 1 and missile_board[row][col] == 0:
-                # A ship is present and hasn't been hit yet
-                possible_targets.append((row, col))
+                print(f"AI targets ship at {row},{col}")
+                missile_board[row][col] = 2  # Mark missile board as hit
+                player_grid[row][col] = 2    # Mark player grid to show ship was hit
 
-    if possible_targets:
-        # AI chooses one of the remaining ship locations to hit
-        row, col = random.choice(possible_targets)
-        missile_board[row][col] = 1  # Mark this location as fired
-        return row, col
-    else:
-        return None  # No more targets to hit
+                for ship in player1_ships:
+                    if (row, col) in ship['coordinates']:
+                        ship['hits'].append((row, col))  # Add hit
+                        break
+                    
+                # Check if all ships are sunk after the hit
+                if all_ships_sunk(player1_ships):
+                    print("All ships sunk! Ending game.")
+                    return row, col  # Game over, all ships sunk
+                return row, col  # Return hit without game over
+
+    # Fallback to random shot if no ship targets are available
+    print("No ships found to target. Switching to random shot...")
+    while True:
+        row = random.randint(0, len(player_grid) - 1)
+        col = random.randint(0, len(player_grid[0]) - 1)
+        if missile_board[row][col] == 0:  # Only fire at unhit locations
+            missile_board[row][col] = 1  # Mark this location as a miss
+            print(f"AI randomly misses at {row},{col}")
+            return row, col, False  # Return miss without game over
 
 
 def draw_grid(grid, x_offset, y_offset, player_grid=True, ghost_positions=None):
@@ -897,7 +912,7 @@ def game_loop():
             elif ai_difficulty == "medium":
                 row, col = ai_medium_turn(grid1, missile_board2, ai_med_ship_hit_tiles)
             elif ai_difficulty == "hard":
-                row, col = ai_hard_turn(grid1, missile_board2)
+                row, col = ai_hard_turn(grid1, missile_board2, player1_ships)
 
             # AI fires at Player 1's ships
             if check_hit(grid1, missile_board2, row, col, player1_ships):
