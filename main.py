@@ -418,8 +418,7 @@ def add_score_to_leaderboard(player_score):
                 quit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key   
- == pygame.K_RETURN:
+                if event.key  == pygame.K_RETURN:
                     name_entered = True  # Finish name input
                     input_active = False
 
