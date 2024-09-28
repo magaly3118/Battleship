@@ -305,7 +305,7 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
     return True
 
 # Shravya Matta
-import pygame
+
 
 def update_scoreboard(player_hits, player_misses, player, hit):
     """
@@ -395,10 +395,7 @@ class Scoreboard:
                 if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     waiting = False
 
-#Shravya Matta
-
-import json
-
+# Shravya Matta
 def add_score_to_leaderboard(player_score):
     player_name = ""  # To store the player's name input
     name_entered = False
@@ -450,8 +447,7 @@ def add_score_to_leaderboard(player_score):
         leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
 
         # Save the updated leaderboard back to the file
-        with open("leaderboard.json",   
- "w") as f:
+        with open("leaderboard.json", "w") as f:
             json.dump(leaderboard, f)
 
         print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
