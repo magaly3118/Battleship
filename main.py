@@ -338,13 +338,13 @@ def display_scoreboard(player_hits, player_misses):
     player2_score = max(0, player_hits[2])
 
     # Display player 1's stats
-    draw_text(f"Player 1 - Hits: {player1_score}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50, align="center")
+    draw_text(f"Player 1 - Hits: {player1_score}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
 
     # Display player 2's stats
-    draw_text(f"Player 2 - Hits: {player2_score}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50, align="center")
+    draw_text(f"Player 2 - Hits: {player2_score}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
 
     # Display a message to instruct the player to click to continue
-    draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150, align="center")
+    draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
 
     # Update the display with the new scoreboard
     pygame.display.flip()
@@ -377,11 +377,11 @@ class Scoreboard:
         win.fill(BLACK)  # Clear the screen
 
         # Display player stats
-        draw_text(f"Player 1 - Hits: {self.player_hits[1]}, Misses: {self.player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50, align="center")
-        draw_text(f"Player 2 - Hits: {self.player_hits[2]}, Misses: {self.player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50, align="center")
+        draw_text(f"Player 1 - Hits: {self.player_hits[1]}, Misses: {self.player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
+        draw_text(f"Player 2 - Hits: {self.player_hits[2]}, Misses: {self.player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
 
         # Instruct the player to continue
-        draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150, align="center")
+        draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
 
         pygame.display.flip()  # Update the display
 
