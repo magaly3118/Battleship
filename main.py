@@ -932,9 +932,9 @@ def all_ships_sunk(ship_list):
     result = all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)
     print(f"All ships sunk check: {result}")  # Debug: Win condition check
     return result
-
+"""
 def display_winner(winner, game_mode):
-    """Display the winner and wait for user input to close the game."""
+    Display the winner and wait for user input to close the game.
     win.fill(BLACK)
     draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50) #Winning player 
     draw_text("Press ENTER to add your score", WIDTH // 2 - 100, HEIGHT // 2 + 50)
@@ -956,7 +956,7 @@ def display_winner(winner, game_mode):
                 if event.key == pygame.K_RETURN:  # Call add_score_to_leaderboard() when ENTER is pressed
                     add_score_to_leaderboard(score)  # Add the correct player's score
                     waiting_for_input = False  # Exit the loop after adding score
-                    
+             """       
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
