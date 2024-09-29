@@ -305,39 +305,54 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
     return True
 
 # Shravya Matta
-# Scoreboard Class
-class Scoreboard:
-    def __init__(self):
-        self.player_hits = {1: 0, 2: 0}
-        self.player_misses = {1: 0, 2: 0}
+def update_scoreboard(player_hits, player_misses, player, hit):
+    """
+    Updates the scoreboard based on player's hits and misses.
 
-    def update(self, player, hit):
-        if hit:
-            self.player_hits[player] += 100  # Add points for a hit
-        else:
-            self.player_hits[player] = max(0, self.player_hits[player] - 1)  # Deduct for a miss
-            self.player_misses[player] += 1  # Increment misses
+    player_hits: dictionary storing player hits (e.g., {1: hits_player1, 2: hits_player2}).
+    player_misses: dictionary storing player misses (e.g., {1: misses_player1, 2: misses_player2}).
+    player: the player number (1 or 2).
+    hit: boolean indicating if the player hit (True) or missed (False).
+    """
+    if hit:
+        player_hits[player] += 100  # Add 100 points for a hit
+    else:
+        player_hits[player] = max(0, player_hits[player] - 1)  # Deduct 1 point for a miss
+        player_misses[player] += 1  # Increment miss count
 
-    def display_scoreboard(self):
-        win.fill(BLACK)  # Clear the screen
-        player1_score = self.player_hits[1]
-        player2_score = self.player_hits[2]
-        
-        # Display player stats with score, hits, and misses
-        draw_text(f"Player 1 - Score: {player1_score}, Hits: {self.player_hits[1]}, Misses: {self.player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
-        draw_text(f"Player 2 - Score: {player2_score}, Hits: {self.player_hits[2]}, Misses: {self.player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
-        draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
-        pygame.display.flip()  # Update the display
+def display_scoreboard(player_hits, player_misses):
+    """
+    Displays the scoreboard on the screen.
 
-        # Wait for input to continue
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-                if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                    waiting = False
+    player_hits: dictionary storing player hits.
+    player_misses: dictionary storing player misses.
+    """
+    win.fill(BLACK)  # Clear the screen
+
+    # Ensure scores don't go below zero
+    player1_score = max(0, player_hits[1])
+    player2_score = max(0, player_hits[2])
+
+    # Display player 1's stats
+    draw_text(f"Player 1 - Total Score: {player1_score}, Hits: {player_hits[1] // 100}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
+
+    # Display player 2's stats
+    draw_text(f"Player 2 - Total Score: {player2_score}, Hits: {player_hits[2] // 100}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
+
+    # Display a message to instruct the player to click to continue
+    draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
+
+    pygame.display.flip()  # Update the display
+
+    # Wait for a mouse click or key press to continue
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                waiting = False
 
 # Function to add score to leaderboard
 def add_score_to_leaderboard(player_score):
