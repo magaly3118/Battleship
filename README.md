@@ -66,3 +66,11 @@ Clarified Code Comments
 
 1.8 -- Implemented Hard AI that targets player 1's ships directly to play perfect games.
 Clarified Code Comments
+
+ -- Added leaderboard.json file and scoreboard skeleton code.
+
+ -- First implementation of scoreboard.
+
+ -- Fixes to Hard AI functionality.
+
+ -- Merged tweaked scoreboard and leaderboard code into main.py and removed extra files.
