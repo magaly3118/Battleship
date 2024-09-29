@@ -305,66 +305,11 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
     return True
 
 # Shravya Matta
-
-
-def update_scoreboard(player_hits, player_misses, player, hit):
-    """
-    Updates the scoreboard based on player's hits and misses.
-    
-    player_hits: dictionary storing player hits (e.g., {1: hits_player1, 2: hits_player2}).
-    player_misses: dictionary storing player misses (e.g., {1: misses_player1, 2: misses_player2}).
-    player: the player number (1 or 2).
-    hit: boolean indicating if the player hit (True) or missed (False).
-    """
-    if hit:
-        player_hits[player] += 100  # Add 100 points for a hit
-    else:
-        player_hits[player] = max(0, player_hits[player] - 1)  # Deduct 1 point for a miss, ensuring no negative score
-        player_misses[player] += 1  # Increment miss count
-
-
-def display_scoreboard(player_hits, player_misses):
-    """
-    Displays the scoreboard on the screen.
-    
-    player_hits: dictionary storing player hits.
-    player_misses: dictionary storing player misses.
-    """
-    # Clear the screen before drawing the scoreboard
-    win.fill(BLACK)
-
-    # Ensure scores don't go below zero
-    player1_score = max(0, player_hits[1])
-    player2_score = max(0, player_hits[2])
-
-    # Display player 1's stats
-    draw_text(f"Player 1 - Hits: {player1_score}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
-
-    # Display player 2's stats
-    draw_text(f"Player 2 - Hits: {player2_score}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
-
-    # Display a message to instruct the player to click to continue
-    draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
-
-    # Update the display with the new scoreboard
-    pygame.display.flip()
-
-    # Wait for a mouse click or key press to continue
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                waiting = False
-
-#Shravya Matta
+# Scoreboard Class
 class Scoreboard:
     def __init__(self):
         self.player_hits = {1: 0, 2: 0}
         self.player_misses = {1: 0, 2: 0}
-        self.display = True
 
     def update(self, player, hit):
         if hit:
@@ -375,14 +320,13 @@ class Scoreboard:
 
     def display_scoreboard(self):
         win.fill(BLACK)  # Clear the screen
-
-        # Display player stats
-        draw_text(f"Player 1 - Hits: {self.player_hits[1]}, Misses: {self.player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
-        draw_text(f"Player 2 - Hits: {self.player_hits[2]}, Misses: {self.player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
-
-        # Instruct the player to continue
+        player1_score = self.player_hits[1]
+        player2_score = self.player_hits[2]
+        
+        # Display player stats with score, hits, and misses
+        draw_text(f"Player 1 - Score: {player1_score}, Hits: {self.player_hits[1]}, Misses: {self.player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
+        draw_text(f"Player 2 - Score: {player2_score}, Hits: {self.player_hits[2]}, Misses: {self.player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
         draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
-
         pygame.display.flip()  # Update the display
 
         # Wait for input to continue
@@ -395,16 +339,13 @@ class Scoreboard:
                 if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     waiting = False
 
-# Shravya Matta
+# Function to add score to leaderboard
 def add_score_to_leaderboard(player_score):
     player_name = ""  # To store the player's name input
-    name_entered = False
     input_active = True
 
     while input_active:
         win.fill(BLACK)
-
-        # Display instructions and current input
         draw_text("Enter your name: " + player_name, WIDTH // 2 - 150, HEIGHT // 2 - 50)
         draw_text("Press ENTER to submit", WIDTH // 2 - 150, HEIGHT // 2 + 50)
         pygame.display.flip()
@@ -413,99 +354,64 @@ def add_score_to_leaderboard(player_score):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
             if event.type == pygame.KEYDOWN:
-                if event.key  == pygame.K_RETURN:
-                    name_entered = True  # Finish name input
-                    input_active = False
-
+                if event.key == pygame.K_RETURN:
+                    input_active = False  # Finish name input
                 elif event.key == pygame.K_BACKSPACE:
-                    # Remove the last character from the name
-                    player_name = player_name[:-1]
+                    player_name = player_name[:-1]  # Remove last character
                 else:
-                    # Add the pressed key to the player_name string
-                    player_name += event.unicode
+                    player_name += event.unicode  # Add character to name
 
-    # Once name is entered, proceed to save the score
-    if name_entered:
-        # Assuming leaderboard is stored as a list of dictionaries in a file or a global list
-        leaderboard = []  # Load existing leaderboard data from a file or global variable
+    # Once name is entered, save the score to the leaderboard
+    leaderboard = []  # Load existing leaderboard data from a file
 
-        try:
-            # Open the leaderboard file and load the existing scores (JSON format for simplicity)
-            with open("leaderboard.json", "r") as f:
-                leaderboard = json.load(f)
-        except FileNotFoundError:
-            # If no leaderboard exists, start with an empty list
-            leaderboard = []
+    leaderboard_file = "leaderboard.json"
+    if os.path.exists(leaderboard_file):
+        with open(leaderboard_file, "r") as f:
+            leaderboard = json.load(f)
 
-        # Add the new score to the leaderboard
-        new_entry = {"name": player_name, "score": player_score}
-        leaderboard.append(new_entry)
+    # Add new score to the leaderboard
+    new_entry = {"name": player_name, "score": player_score}
+    leaderboard.append(new_entry)
+    leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
 
-        # Sort the leaderboard by score in descending order (highest scores first)
-        leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
+    with open(leaderboard_file, "w") as f:
+        json.dump(leaderboard, f)
 
-        # Save the updated leaderboard back to the file
-        with open("leaderboard.json", "w") as f:
-            json.dump(leaderboard, f)
+    print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
 
-        print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
-
+# Function to display leaderboard
 def display_leaderboard():
-    # Display the leaderboard, or show a blank menu if no file exists
     leaderboard = []
     leaderboard_file = "leaderboard.json"
 
-    # Check if the leaderboard file exists
     if os.path.exists(leaderboard_file):
-        # Load the leaderboard data from the file
-        try:
-            with open(leaderboard_file, "r") as f:
-                leaderboard = json.load(f)
-        except json.JSONDecodeError:
-            # If the file exists but is corrupted or empty, set an empty leaderboard
-            leaderboard = []
-    else:
-        # No file exists, so start with an empty leaderboard
-        leaderboard = []
+        with open(leaderboard_file, "r") as f:
+            leaderboard = json.load(f)
 
-    # Display the leaderboard on the screen
     win.fill(BLACK)
 
     if leaderboard:
-        # Sort the leaderboard in descending order by score
-        leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)
-
         draw_text("Leaderboard", WIDTH // 2 - 100, HEIGHT // 2 - 150)
-
-        # Display the top 5 players (or fewer if there aren't that many)
-        for index, entry in enumerate(leaderboard[:5]):
+        for index, entry in enumerate(leaderboard[:5]):  # Display top 5 players
             name = entry["name"]
             score = entry["score"]
             draw_text(f"{index + 1}. {name}: {score}", WIDTH // 2 - 100, HEIGHT // 2 - 50 + index * 30)
-
     else:
-        # If no leaderboard data exists, display a blank message
         draw_text("Leaderboard is empty", WIDTH // 2 - 100, HEIGHT // 2)
 
     draw_text("Press ENTER to return to the main menu", WIDTH // 2 - 100, HEIGHT // 2 + 150)
     pygame.display.flip()
 
-    # Wait for the user to press ENTER to go back to the menu
     waiting_for_input = True
     while waiting_for_input:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.KEYDOWN:   
-
-                if event.key == pygame.K_RETURN:   
-  # Return to main menu on ENTER
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Return to main menu
                     waiting_for_input = False
-
-    
 
 # Matthew McManness
 def display_leaderboard():
