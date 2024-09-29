@@ -66,8 +66,6 @@ grid1 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 1 sh
 missile_board1 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 1 missile grid
 grid2 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 2 ship grid
 missile_board2 = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]  # Player 2 missile grid
-player_score_1 = 0
-player_score_2 = 0
 
 # Default ship lengths
 default_ships = [1, 2, 3, 4, 5]
@@ -280,6 +278,8 @@ def place_ai_ships(grid, ships_to_place, player2_ships):
                 else:
                     ship_coordinates = [(row + i, col) for i in range(ship_len)]
 
+                print(f"AI Ships: {ship_coordinates}")
+
                 player2_ships.append({
                     'coordinates': ship_coordinates,
                     'hits': []  # Initialize an empty hits list for tracking
@@ -349,6 +349,9 @@ def display_scoreboard(player_hits, player_misses):
 
     # Calculate scores for each player
     scores = calculate_score(player_hits, player_misses)
+    print(f"Updating scores: {scores}")
+    player_score_1 = scores[1]
+    player_score_2 = scores[2]
 
     # Display player 1's stats
     draw_text(f"Player 1 - Total Score: {scores[1]}, Hits: {player_hits[1]}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
@@ -749,9 +752,11 @@ def ship_placement_menu(player_grid, player_number, ship_list, ships_to_place):
 
 def check_hit(ship_grid, missile_board, row, col, ship_list):
     """Check if a ship is hit and update both the missile board and the player's ship grid.
-       If a ship is sunk, mark it differently."""
-    if missile_board[row][col] != 0:  # If the cell has already been targeted, return False
-        return False
+       If a ship is sunk, mark it differently.
+       Returns if it was a hit or a miss   
+    """
+    #if missile_board[row][col] != 0:  # If the cell has already been targeted, return False
+        #return False
 
     if ship_grid[row][col] == 1:  # A ship is hit
         missile_board[row][col] = 2  # Mark hit on the missile board
@@ -772,11 +777,11 @@ def check_hit(ship_grid, missile_board, row, col, ship_list):
                         missile_board[r][c] = 3  # Mark the ship as sunk on the missile board
                         ship_grid[r][c] = 3  # Mark the ship as sunk on the player's ship grid
                     sunk_sound.play()
-        return True  # A valid shot was made
+        return True  # A ship was hit
     else:
         missile_board[row][col] = 1  # Mark miss on the missile board
         miss_sound.play()
-    return True  # Return True since it was a valid shot
+        return False  # Return False since it was a miss
 
 def main_menu():
 
@@ -809,7 +814,7 @@ def main_menu():
 
     return selected_ships #Return number of ships to use in game
 
-def display_winner(winner, game_mode):
+def display_winner(winner, game_mode, player_score_1, player_score_2):
     # Display the winner and wait for user input. Only add score if a human player wins
     win.fill(BLACK)
     if winner == 2 and game_mode == "AI":
@@ -823,6 +828,7 @@ def display_winner(winner, game_mode):
 
     if winner == 1 or (winner == 2 and game_mode != "AI"):
         score = player_score_1 if winner == 1 else player_score_2  # Determine correct score
+        print(type(score), score)
 
     waiting_for_input = True
     while waiting_for_input:  # Wait for keyboard input
@@ -870,31 +876,7 @@ def all_ships_sunk(ship_list):
     result = all(len(ship['hits']) == len(ship['coordinates']) for ship in ship_list)
     print(f"All ships sunk check: {result}")  # Debug: Win condition check
     return result
-"""
-def display_winner(winner, game_mode):
-    Display the winner and wait for user input to close the game.
-    win.fill(BLACK)
-    draw_text(f"Player {winner} Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50) #Winning player 
-    draw_text("Press ENTER to add your score", WIDTH // 2 - 100, HEIGHT // 2 + 50)
-    pygame.display.flip()
-
-# Determine the score to add to the leaderboard based on who won
-    if winner == 1:
-        score = player_score_1
-    elif winner == 2:
-        score = player_score_2
-
-    waiting_for_input = True
-    while waiting_for_input:  # Wait for keyboard input
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # Call add_score_to_leaderboard() when ENTER is pressed
-                    add_score_to_leaderboard(score)  # Add the correct player's score
-                    waiting_for_input = False  # Exit the loop after adding score
-             """       
+   
 def instructions_page():
     """Display the game instructions to the player."""
     instructions_running = True
@@ -952,6 +934,10 @@ def game_loop():
     player_hits = {1: 0, 2: 0}
     player_misses = {1: 0, 2: 0}
 
+    # Initialize score trackers
+    player_score_1 = 0
+    player_score_2 = 0
+
     # For Medium AI, tracks tiles where ships have been hit
     ai_med_ship_hit_tiles = [] 
 
@@ -981,13 +967,18 @@ def game_loop():
                             update_scoreboard(player_hits, player_misses, 1, True)  # Hit
                         else:
                             update_scoreboard(player_hits, player_misses, 1, False)  # Miss
+
+                        scores = calculate_score(player_hits, player_misses) # update scores 
+                        player_score_1 = scores[1]
+                        player_score_2 = scores[2]
+
                         if all_ships_sunk(player2_ships):  # Player 1 wins
                             win_sound.play()
-                            display_winner(1, game_mode)
+                            display_scoreboard(player_hits, player_misses)
+                            display_winner(1, game_mode, player_score_1, player_score_2)
                             running = False
                         else:
                             display_turn_screen(2, game_mode)  # Switch to Player 2
-                            display_scoreboard(player_hits, player_misses)
                             turn = 2
 
         # Handle Player 2's turn (pass-and-play mode)
@@ -1010,13 +1001,18 @@ def game_loop():
                             update_scoreboard(player_hits, player_misses, 2, True)  # AI Hit
                         else:
                             update_scoreboard(player_hits, player_misses, 2, False)  # AI Miss
+                        
+                        scores = calculate_score(player_hits, player_misses) # update scores 
+                        player_score_1 = scores[1]
+                        player_score_2 = scores[2]
+
                         if all_ships_sunk(player1_ships):  # Player 2 wins
                             win_sound.play()
-                            display_winner(2, game_mode)
+                            display_scoreboard(player_hits, player_misses)
+                            display_winner(2, game_mode, player_score_1, player_score_2)
                             running = False
                         else:
                             display_turn_screen(1, game_mode)  # Switch back to Player 1
-                            display_scoreboard(player_hits, player_misses)
                             turn = 1
 
         # Handle AI's turn
@@ -1029,19 +1025,26 @@ def game_loop():
             elif ai_difficulty == "hard":
                 row, col = ai_hard_turn(grid1, missile_board2, player1_ships)
 
+            print(f"AI: row {row}, col {col}")
+
             # AI fires at Player 1's ships
             if check_hit(grid1, missile_board2, row, col, player1_ships):
                 update_scoreboard(player_hits, player_misses, 2, True)  # AI Hit
             else:
                 update_scoreboard(player_hits, player_misses, 2, False)  # AI Miss
+
+            scores = calculate_score(player_hits, player_misses) # update scores 
+            player_score_1 = scores[1]
+            player_score_2 = scores[2]
+            
             if all_ships_sunk(player1_ships):  # AI wins
                 win_sound.play()
                 print("AI wins!")  # Debug: AI wins
-                display_winner(2, game_mode)
+                display_scoreboard(player_hits, player_misses)
+                display_winner(2, game_mode, player_score_1, player_score_2)
                 running = False
             else:
                 display_turn_screen(1)  # Switch back to Player 1
-                display_scoreboard(player_hits, player_misses)
                 turn = 1
 
     pygame.quit()
