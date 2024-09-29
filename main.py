@@ -314,11 +314,29 @@ def update_scoreboard(player_hits, player_misses, player, hit):
     player: the player number (1 or 2).
     hit: boolean indicating if the player hit (True) or missed (False).
     """
-    if hit:
-        player_hits[player] += 100  # Add 100 points for a hit
+  
+
+    if hit == True:
+        player_hits[player] += 1  # Increment hit count
     else:
-        player_hits[player] = max(0, player_hits[player] - 1)  # Deduct 1 point for a miss
         player_misses[player] += 1  # Increment miss count
+
+def calculate_score(player_hits, player_misses):
+    """
+    Calculates the total score for each player.
+
+    player_hits: dictionary storing player hits.
+    player_misses: dictionary storing player misses.
+
+    Returns:
+        A dictionary with total scores for each player.
+    """
+    player_scores = {}
+    for player in player_hits.keys():
+        # Total score is calculated as hits * 100 - misses
+        score = (player_hits[player] * 100) - player_misses[player]
+        player_scores[player] = max(0, score)  # Ensure score is not negative
+    return player_scores
 
 def display_scoreboard(player_hits, player_misses):
     """
@@ -329,15 +347,14 @@ def display_scoreboard(player_hits, player_misses):
     """
     win.fill(BLACK)  # Clear the screen
 
-    # Ensure scores don't go below zero
-    player1_score = max(0, player_hits[1])
-    player2_score = max(0, player_hits[2])
+    # Calculate scores for each player
+    scores = calculate_score(player_hits, player_misses)
 
     # Display player 1's stats
-    draw_text(f"Player 1 - Total Score: {player1_score}, Hits: {player_hits[1] // 100}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
+    draw_text(f"Player 1 - Total Score: {scores[1]}, Hits: {player_hits[1]}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
 
     # Display player 2's stats
-    draw_text(f"Player 2 - Total Score: {player2_score}, Hits: {player_hits[2] // 100}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
+    draw_text(f"Player 2 - Total Score: {scores[2]}, Hits: {player_hits[2]}, Misses: {player_misses[2]}", WIDTH // 2, HEIGHT // 2 + 50)
 
     # Display a message to instruct the player to click to continue
     draw_text("Press any key to continue...", WIDTH // 2, HEIGHT // 2 + 150)
