@@ -111,6 +111,7 @@ def display_menu():
                     menu_running = False
 
 def add_score_to_leaderboard(player_score):
+    """Adds the winning player's score to the leaderboard"""
     player_name = ""  # To store the player's name input
     name_entered = False
     input_active = True
@@ -167,9 +168,10 @@ def add_score_to_leaderboard(player_score):
         print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
 
 def select_game_mode():
-
-    # present a menu to select between pass and play mode or AI mode.
-    # Returns a string (either "pass_and_play" or "AI")
+    """
+    Present a menu to select between pass and play mode or AI mode.
+    Returns a string (either "pass_and_play" or "AI")
+    """
     game_mode = "pass_and_play" # Default
     menu_running = True
 
@@ -204,9 +206,10 @@ def select_game_mode():
     return game_mode
 
 def select_ai_difficulty():
-
-    # Presents a menu to select the AI Level
-    # Returns: A string indicating the AI difficulty ("easy", "medium", "hard")
+    """"
+    Presents a menu to select the AI Level
+    Returns: A string indicating the AI difficulty ("easy", "medium", "hard")
+    """
 
     ai_difficulty = "easy"  # Default
     menu_running = True
@@ -245,10 +248,11 @@ def select_ai_difficulty():
     return ai_difficulty
 
 def place_ai_ships(grid, ships_to_place, player2_ships):
-    
-    # Automatically places the AI's ships on the grid.
-    # Arguments:
-    #     - grid: The AI's grid where ships will be placed.
+    """
+    Automatically places the AI's ships on the grid.
+    Arguments:
+         - grid: The AI's grid where ships will be placed.
+    """
     
     # Define ship lengths (same as player ships)
     for ship_len in ships_to_place:
@@ -287,9 +291,10 @@ def place_ai_ships(grid, ships_to_place, player2_ships):
                 placed = True
 
 def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
-    
-    # Helper function to check if the area is free to place a ship.
-    # Returns True if the ship can be placed, False if there's an overlap or out of bounds.
+    """
+    Helper function to check if the area is free to place a ship.
+    Returns True if the ship can be placed, False if there's an overlap or out of bounds.
+    """
     
     if orientation == "H":
         # Check if any of the cells are already occupied
@@ -417,6 +422,9 @@ def add_score_to_leaderboard(player_score):
 
 # Function to display leaderboard
 def display_leaderboard():
+    """
+    Displays the top five scores stored in the leaderboard
+    """
     leaderboard = []
     leaderboard_file = "leaderboard.json"
 
@@ -450,7 +458,7 @@ def display_leaderboard():
 
 # Matthew McManness
 def display_leaderboard():
-    # Display the leaderboard, or show a blank menu if no file exists
+    """Display the leaderboard, or show a blank menu if no file exists"""
     leaderboard = []
     leaderboard_file = "leaderboard.json"
 
@@ -502,6 +510,7 @@ def display_leaderboard():
 
 # Manvir Kaur  
 def ai_easy_turn(player_grid, missile_board):
+    """AI randomly chooses a cell that hasn't been hit before"""
     # Keep choosing random cells until a valid (not previously fired at) cell is found
     valid_shot = False
     while not valid_shot:
@@ -815,7 +824,7 @@ def main_menu():
     return selected_ships #Return number of ships to use in game
 
 def display_winner(winner, game_mode, player_score_1, player_score_2):
-    # Display the winner and wait for user input. Only add score if a human player wins
+    """Display the winner and wait for user input. Only add score if a human player wins"""
     win.fill(BLACK)
     if winner == 2 and game_mode == "AI":
         draw_text("AI Wins!", WIDTH // 2 - 100, HEIGHT // 2 - 50)  # Display "AI Wins"
