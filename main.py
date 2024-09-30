@@ -75,6 +75,7 @@ font = pygame.font.Font(None, 36) #Setting the font for text in the game
 # New Functions:
 
 def display_menu():
+    """Menu to select between playing or showing leaderboard"""
     # Default selection
     menu_selection = "Leaderboard"
     menu_running = True
