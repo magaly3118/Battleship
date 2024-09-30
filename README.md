@@ -1,4 +1,4 @@
-# EECS 581 Project 1 Battleship
+# EECS 581 Project 2 Battleship
 
 Battleship is a 2-player game where each player can position ships of various sizes (identical to their opponent's fleet) whereever they wish on a grid-based board.
 
@@ -8,7 +8,9 @@ Once every slot of a given ship has been hit, the ship will sink.
 
 Once all ships of a given player have been sunk, the game ends, and the player with one or more remaining ships is declared the winner.
 
-This game is designed to be run on a single device, players are expected to hand off control of the device between rounds.
+This original game was designed to run on a single device, with players expected to hand off control of the device between rounds.
+
+There is now an added functionality of playing with an AI. Players can choose to play with the AI in 3 different modes - easy, medium, and hard.
 
 # Pygame (Prerequisite)
 To run this game, you will be required to install Pygame.
@@ -37,9 +39,11 @@ To play Battleship, run the following command in Command Prompt/Powershell/Termi
 
 Assuming Python and Pygame are installed correctly, you should see a window containing instructions on how to play the game.
 
-As this game is designed to be run on a single device, players are expected to hand off control of the device between rounds.
+As this game is designed to be run on a single device, players are expected to hand off control of the device between rounds unless you choose to play with the AI.
 
-When one player has sunk the other's entire fleet of ships, the game ends.
+When one player has sunk the other's entire fleet of ships, the game ends. At this point, you will be able to see the total number of hits and misses each player had along with the final score. The winning player will then be able to enter their name to the leaderboard.
+
+After the instructions window, you can choose to view the leaderboard or play the game. 
 
 # What is main_.py?
 `main_.py` (not to be confused with `main.py`) is a "test" file that was used during initial development for experimental features.
@@ -52,25 +56,34 @@ The Game gives players a hundred points when they hit a ship and subtracts 1 poi
 
 # Version History
 
-1.1 --  Refactored code to accomadate new AI menu and added AI ship placement, empty functions for future AI and Score features 
-Clarified Code Comments
+1.01 -- Refactored code to accomadate new AI menu and added AI ship placement, empty functions for future AI and Score features 
+        Clarified Code Comments
 
-1.3 -- Impelemented Easy AI that randomly attacks unshot at tiles 
-Clarified Code Comments
+1.03 -- Impelemented Easy AI that randomly attacks unshot at tiles 
+        Clarified Code Comments
 
-1.5 -- Impelemented Medium AI that randomly attacks until it hits a ship and then checks the tiles around a hit to better target large ships
-Clarified Code Comments
+1.05 -- Impelemented Medium AI that randomly attacks until it hits a ship and then checks the tiles around a hit to better target large ships
+        Clarified Code Comments
 
-1.7  -- Implemented simple leaderboard to test functionality
-Clarified Code Comments
+1.07 -- Implemented simple leaderboard to test functionality
+        Clarified Code Comments
 
-1.8 -- Implemented Hard AI that targets player 1's ships directly to play perfect games.
-Clarified Code Comments
+1.08 -- Implemented Hard AI that targets player 1's ships directly to play perfect games.
+        Clarified Code Comments
 
- -- Added leaderboard.json file and scoreboard skeleton code.
+1.10 -- Fixed errors and added more documentation to make functions more clear
 
- -- First implementation of scoreboard.
+1.13 -- First implementation of scoreboard.
+        Updated documetation
 
- -- Fixes to Hard AI functionality.
+1.16 -- Fixes to Hard AI functionality.
 
- -- Merged tweaked scoreboard and leaderboard code into main.py and removed extra files.
+1.23 -- Updated scoreboard to fix a bug
+
+1.25 -- Merged tweaked scoreboard and leaderboard code with all bugs squashed into main.py 
+
+1.27 -- Updated documentation and removed extra redundant files.
+
+1.33 -- Regenerated documentation, added all necessary files, and adequately commented all code
+
+1.34 -- Updated README.md to reflect accurate version history and game features
