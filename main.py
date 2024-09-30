@@ -4,7 +4,7 @@ Authors: Abhishek Bhatt [3086901], Samuel Buehler [3031928], Collins Gatimi [279
 
 Updated by: Matthew McManness [2210261], Manvir Kaur [3064194], Magaly Camacho [3072618], Mariam Oraby [3127776], Shravya Matta [3154808]
 Date Created: 09/09/24
-Date Last Modified: 09/23/24
+Date Last Modified: 09/29/24
 
 Program Tile: Battleship
 Program Description: Create a game where two players can place their ships on their grid and try to hit each other's ships by guessing the ships' location on the grid. The first player to sink all the opponent's ships wins.
@@ -21,16 +21,16 @@ import random
 import os
 import json
 
-# Initialize pygame
+# Initialize pygame and pygame's mixer (for sound)
 pygame.init() 
 pygame.mixer.init()#Init for music/sound
 
-# Load sounds
+# Load sound files for various in-game events (hits, misses, ship sinking, win)
 hit_sound = pygame.mixer.Sound("assets/hit_sound.wav") #Sound for when a ship is hit
 miss_sound = pygame.mixer.Sound("assets/miss_sound.wav") #Sound for when a miss happens
 sunk_sound = pygame.mixer.Sound("assets/sunk_sound.wav") #Sound for when a ship is sunk
 win_sound = pygame.mixer.Sound("assets/win_sound.wav") #Sound for when the game ends
-# Set up display
+# Set up the display/window dimensions and title
 WIDTH, HEIGHT = 1200, 600 #Screen width/height
 win = pygame.display.set_mode((WIDTH, HEIGHT)) #Sets the dimensions for the window
 pygame.display.set_caption("2-Player Battleship") #Caption for the screen
@@ -45,16 +45,16 @@ GHOST_COLOR = (200, 200, 200)
 BLUE = (0, 0, 255)  # Color for sunk ships on the ship grids
 # Grid settings
 CELL_SIZE = 40 #Cell size for each cell in the grid
-GRID_SIZE = 10 #10x10 grid
-MARGIN = 50
+GRID_SIZE = 10 #10x10 grid for placing ships
+MARGIN = 50 #Margin around the grid
 
-# Load ship images
+# Load ship images for different ship sizes
 ship_images = {
-    1: pygame.image.load("assets/ship_1.png"),
-    2: pygame.image.load("assets/ship_2.png"),
-    3: pygame.image.load("assets/ship_3.png"),
-    4: pygame.image.load("assets/ship_4.png"),
-    5: pygame.image.load("assets/ship_5.png")
+    1: pygame.image.load("assets/ship_1.png"), #1-cell ship
+    2: pygame.image.load("assets/ship_2.png"), #2-cell ship
+    3: pygame.image.load("assets/ship_3.png"), #3-cell ship
+    4: pygame.image.load("assets/ship_4.png"), #4-cell ship
+    5: pygame.image.load("assets/ship_5.png") #5-cell ship
 }
 
 # Resize the ship images to fit the grid cells
@@ -73,7 +73,7 @@ default_ships = [1, 2, 3, 4, 5]
 font = pygame.font.Font(None, 36) #Setting the font for text in the game
 
 # New Functions:
-
+#function to display the main menu
 def display_menu():
     """Menu to select between playing or showing leaderboard"""
     # Default selection
@@ -81,61 +81,65 @@ def display_menu():
     menu_running = True
 
     while menu_running:
-        win.fill(BLACK)
+        win.fill(BLACK) #clear the screen with black background
 
         # Display menu options
-        draw_text("Main Menu", WIDTH // 2 - 100, HEIGHT // 2 - 100)
-        draw_text(f"Current selection: {menu_selection}", WIDTH // 2 - 150, HEIGHT // 2)
-        draw_text("Use LEFT/RIGHT arrows to change selection", WIDTH // 2 - 200, HEIGHT // 2 + 50)
-        draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100)
+        draw_text("Main Menu", WIDTH // 2 - 100, HEIGHT // 2 - 100) #title
+        draw_text(f"Current selection: {menu_selection}", WIDTH // 2 - 150, HEIGHT // 2)# show current selection
+        draw_text("Use LEFT/RIGHT arrows to change selection", WIDTH // 2 - 200, HEIGHT // 2 + 50) #Instructions
+        draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100) #Instruction to confirm
 
-        pygame.display.flip()
+        pygame.display.flip()#Update the display
 
+        #handle menu input(navigation and selection)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+            if event.type == pygame.QUIT: #if user clicks the close button
+                pygame.quit() #quit the game
                 quit()
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+            if event.type == pygame.KEYDOWN: #Key press event
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:  #toggle between options
                     # Toggle between 'Leaderboard' and 'Game'
                     if menu_selection == "Leaderboard":
-                        menu_selection = "Game"
+                        menu_selection = "Game" #switch to game mode
                     else:
-                        menu_selection = "Leaderboard"
+                        menu_selection = "Leaderboard" #switch back to leaderboard
 
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN: #if Enter key is pressed
                     # Confirm selection and exit menu
                     if menu_selection == "Leaderboard":
-                        display_leaderboard()  # Call the leaderboard function
+                        display_leaderboard()  # Call the leaderboard function to display the leaderboard
                     # Exit menu and continue to the game
                     menu_running = False
 
+#Function to add the player's score to the leaderboard 
 def add_score_to_leaderboard(player_score):
     """Adds the winning player's score to the leaderboard"""
     player_name = ""  # To store the player's name input
     name_entered = False
     input_active = True
 
+    #Loop for handling name input
     while input_active:
-        win.fill(BLACK)
+        win.fill(BLACK) #Clear the screen
         
         # Display instructions and current input
-        draw_text("Enter your name: " + player_name, WIDTH // 2 - 150, HEIGHT // 2 - 50)
-        draw_text("Press ENTER to submit", WIDTH // 2 - 150, HEIGHT // 2 + 50)
-        pygame.display.flip()
+        draw_text("Enter your name: " + player_name, WIDTH // 2 - 150, HEIGHT // 2 - 50)# show name input
+        draw_text("Press ENTER to submit", WIDTH // 2 - 150, HEIGHT // 2 + 50) #instruction to submit
+        pygame.display.flip() #update display
 
+        #Handle input events for typing and name entry
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN: #If enter key is pressed
                     name_entered = True  # Finish name input
                     input_active = False
 
-                elif event.key == pygame.K_BACKSPACE:
+                elif event.key == pygame.K_BACKSPACE: #if backspace is pressed
                     # Remove the last character from the name
                     player_name = player_name[:-1]
                 else:
@@ -152,7 +156,7 @@ def add_score_to_leaderboard(player_score):
             with open("leaderboard.json", "r") as f:
                 leaderboard = json.load(f)
         except FileNotFoundError:
-            # If no leaderboard exists, start with an empty list
+            # If no leaderboard exists, create a new empty leaderboard
             leaderboard = []
 
         # Add the new score to the leaderboard
@@ -168,6 +172,7 @@ def add_score_to_leaderboard(player_score):
 
         print(f"Added {player_name}'s score of {player_score} to the leaderboard!")
 
+#function to select the game mode (pass and play or AI mode)
 def select_game_mode():
     """
     Present a menu to select between pass and play mode or AI mode.
@@ -177,7 +182,7 @@ def select_game_mode():
     menu_running = True
 
     while menu_running:
-        win.fill(BLACK)
+        win.fill(BLACK) #clear the screen
 
         # Display menu options:
         draw_text("Select Game Mode", WIDTH // 2 - 150, HEIGHT // 2 - 100)
@@ -187,6 +192,7 @@ def select_game_mode():
 
         pygame.display.flip()
 
+        # Handle input events for navigating and selecting game mode
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -196,15 +202,16 @@ def select_game_mode():
                     if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                         # Toggle between 'pass_and_play' and 'AI'
                         if game_mode == "pass_and_play":
-                            game_mode = "AI"
+                            game_mode = "AI" #switch to AI mode
                         else:
-                            game_mode = "pass_and_play"
+                            game_mode = "pass_and_play" # Switch back to pass and play
 
-                    if event.key == pygame.K_RETURN:
+
+                    if event.key == pygame.K_RETURN: # If Enter key is pressed
                         # Confirm selection and exit menu
                         menu_running = False
 
-    return game_mode
+    return game_mode #return the selected game mode
 
 def select_ai_difficulty():
     """"
@@ -212,11 +219,11 @@ def select_ai_difficulty():
     Returns: A string indicating the AI difficulty ("easy", "medium", "hard")
     """
 
-    ai_difficulty = "easy"  # Default
-    menu_running = True
+    ai_difficulty = "easy"  # Default AI difficulty is set to "easy".
+    menu_running = True # This flag controls whether the difficulty selection menu is running.
 
     while menu_running:
-        win.fill(BLACK)
+        win.fill(BLACK) #clear the screen
 
         # Display the difficulty selection menu
         draw_text("Select AI Difficulty", WIDTH // 2 - 150, HEIGHT // 2 - 100)
@@ -224,72 +231,72 @@ def select_ai_difficulty():
         draw_text("Use LEFT/RIGHT arrows to change difficulty", WIDTH // 2 - 200, HEIGHT // 2 + 50)
         draw_text("Press ENTER to confirm", WIDTH // 2 - 100, HEIGHT // 2 + 100)
 
-        pygame.display.flip()
+        pygame.display.flip() # Update the screen to show the menu.
 
-        # Event handling to change the AI difficulty
+        # Event handling to change the AI difficulty or quit the game.
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+            if event.type == pygame.QUIT:  # Handle window close event.
+                pygame.quit()  # Quit pygame.
+                quit()  # Exit the program.
 
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:  # If a key is pressed.
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    # Cycle through difficulties: easy -> medium -> hard -> easy
+                    # Cycle through the AI difficulty levels.
                     if ai_difficulty == "easy":
-                        ai_difficulty = "medium"
+                        ai_difficulty = "medium"  # Change from easy to medium.
                     elif ai_difficulty == "medium":
-                        ai_difficulty = "hard"
+                        ai_difficulty = "hard"  # Change from medium to hard.
                     else:
-                        ai_difficulty = "easy"
+                        ai_difficulty = "easy"  # Reset to easy from hard.
 
-                if event.key == pygame.K_RETURN:
-                    # Confirm selection and exit menu
-                    menu_running = False
+                if event.key == pygame.K_RETURN:  # Confirm the selection with ENTER key.
+                    menu_running = False  # Exit the menu loop once a selection is made.
 
-    return ai_difficulty
+    return ai_difficulty  # Return the selected AI difficulty.
 
 def place_ai_ships(grid, ships_to_place, player2_ships):
     """
     Automatically places the AI's ships on the grid.
     Arguments:
          - grid: The AI's grid where ships will be placed.
+         - ships_to_place: List of ship lengths to be placed.
+         - player2_ships: A list to store the AI's ship positions and states.
     """
     
-    # Define ship lengths (same as player ships)
+    # Loop over each ship's length to place them on the grid.
     for ship_len in ships_to_place:
-        placed = False  # Track if the ship was successfully placed
+        placed = False  # Flag to indicate whether the ship was successfully placed.
         while not placed:
-            # Randomly choose orientation ('H' for horizontal, 'V' for vertical)
+            # Randomly choose between horizontal ('H') or vertical ('V') orientation.
             orientation = random.choice(["H", "V"])
 
-            if orientation == "H":
-                # Pick random start position where the ship fits horizontally
-                row = random.randint(0, GRID_SIZE - 1)
-                col = random.randint(0, GRID_SIZE - ship_len)
-            else:
-                # Pick random start position where the ship fits vertically
-                row = random.randint(0, GRID_SIZE - ship_len)
-                col = random.randint(0, GRID_SIZE - 1)
+            if orientation == "H":  # For horizontal placement.
+                row = random.randint(0, GRID_SIZE - 1)  # Random row.
+                col = random.randint(0, GRID_SIZE - ship_len)  # Ensure the ship fits horizontally.
+            else:  # For vertical placement.
+                row = random.randint(0, GRID_SIZE - ship_len)  # Ensure the ship fits vertically.
+                col = random.randint(0, GRID_SIZE - 1)  # Random column.
 
-            # Check if the selected area is free to place the ship
+            # Check if the selected area on the grid is free to place the ship.
             if check_area_is_free(grid, row, col, ship_len, orientation):
-                # Place the ship on the grid and track it in player2_ships (AI's ships)
-                ship_coordinates = []  # To store the coordinates of the ship
+                # Place the ship on the grid and store its coordinates.
+                ship_coordinates = []
                 place_ship(grid, row, col, ship_len, orientation, player2_ships)
 
-                # After placing, add the ship's coordinates to player2_ships for tracking
-                if orientation == "H":
+                # Store the coordinates of the placed ship for tracking.
+                if orientation == "H":  # Horizontal ship coordinates.
                     ship_coordinates = [(row, col + i) for i in range(ship_len)]
-                else:
+                else:  # Vertical ship coordinates.
                     ship_coordinates = [(row + i, col) for i in range(ship_len)]
 
                 print(f"AI Ships: {ship_coordinates}")
 
+                # Store the ship's information (coordinates and hit status).
                 player2_ships.append({
                     'coordinates': ship_coordinates,
-                    'hits': []  # Initialize an empty hits list for tracking
+                    'hits': []  # Initialize an empty list to track hits.
                 })
-                placed = True
+                placed = True  # Mark the ship as successfully placed.
 
 def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
     """
@@ -297,35 +304,33 @@ def check_area_is_free(grid, start_row, start_col, ship_len, orientation):
     Returns True if the ship can be placed, False if there's an overlap or out of bounds.
     """
     
-    if orientation == "H":
-        # Check if any of the cells are already occupied
+    if orientation == "H":  # For horizontal placement.
         for i in range(ship_len):
-            if grid[start_row][start_col + i] != 0:
-                return False
-    else:
-        # Check if any of the cells are already occupied
+            if grid[start_row][start_col + i] != 0:  # Check for occupied cells.
+                return False  # If any cell is occupied, return False.
+    else:  # For vertical placement.
         for i in range(ship_len):
-            if grid[start_row + i][start_col] != 0:
-                return False
+            if grid[start_row + i][start_col] != 0:  # Check for occupied cells.
+                return False  # If any cell is occupied, return False.
 
-    return True
+    return True  # Return True if all cells are free.
 
 # Shravya Matta
 def update_scoreboard(player_hits, player_misses, player, hit):
     """
     Updates the scoreboard based on player's hits and misses.
-
+    
     player_hits: dictionary storing player hits (e.g., {1: hits_player1, 2: hits_player2}).
     player_misses: dictionary storing player misses (e.g., {1: misses_player1, 2: misses_player2}).
     player: the player number (1 or 2).
     hit: boolean indicating if the player hit (True) or missed (False).
     """
-  
 
-    if hit == True:
-        player_hits[player] += 1  # Increment hit count
-    else:
-        player_misses[player] += 1  # Increment miss count
+    if hit:  # If the player hit a target.
+        player_hits[player] += 1  # Increase hit count for the player.
+    else:  # If the player missed.
+        player_misses[player] += 1  # Increase miss count for the player.
+        
 
 def calculate_score(player_hits, player_misses):
     """
@@ -353,11 +358,11 @@ def display_scoreboard(player_hits, player_misses):
     """
     win.fill(BLACK)  # Clear the screen
 
-    # Calculate scores for each player
+    # Calculate scores for both players.
     scores = calculate_score(player_hits, player_misses)
-    print(f"Updating scores: {scores}")
-    player_score_1 = scores[1]
-    player_score_2 = scores[2]
+    print(f"Updating scores: {scores}")  # Output score to console.
+    player_score_1 = scores[1]  # Player 1's score.
+    player_score_2 = scores[2]  # Player 2's score.
 
     # Display player 1's stats
     draw_text(f"Player 1 - Total Score: {scores[1]}, Hits: {player_hits[1]}, Misses: {player_misses[1]}", WIDTH // 2, HEIGHT // 2 - 50)
@@ -378,7 +383,7 @@ def display_scoreboard(player_hits, player_misses):
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                waiting = False
+                waiting = False # Exit the loop if a key or mouse button is pressed.
 
 # Function to add score to leaderboard
 def add_score_to_leaderboard(player_score):
@@ -503,7 +508,7 @@ def display_leaderboard():
     while waiting_for_input:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                pygame.quit() # Quit if window is closed
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:  # Return to main menu on ENTER
@@ -793,36 +798,44 @@ def check_hit(ship_grid, missile_board, row, col, ship_list):
         miss_sound.play()
         return False  # Return False since it was a miss
 
+# Function for the main menu where the player can select the number of ships
 def main_menu():
+    """
+    Displays the main menu to allow the user to select the number of ships for the game.
+    """
+    
+    selected_ships = 3  # Default number of ships set to 3
+    menu_running = True  # Flag to keep the menu running
 
-
-    """Main menu to select the number of ships."""
-    selected_ships = 3 #Default value
-    menu_running = True
-
+    # Main loop for the menu, continues until the player starts the game or quits
     while menu_running:
-        win.fill(BLACK)
-        draw_text("Welcome to Battleship", WIDTH // 2 - 150, HEIGHT // 2 - 100) #Just info for users so they know how to use the 
-        draw_text(f"Number of Ships: {selected_ships}", WIDTH // 2 - 100, HEIGHT // 2)
-        draw_text("Use UP and DOWN arrow keys to select the number of ships.", WIDTH // 2 - 300, HEIGHT // 2 + 50)
-        draw_text("Press ENTER to start", WIDTH // 2 - 100, HEIGHT // 2 + 200)
+        win.fill(BLACK)  # Fill the screen with a black background
+        draw_text("Welcome to Battleship", WIDTH // 2 - 150, HEIGHT // 2 - 100)  # Title displayed at the top of the screen
+        draw_text(f"Number of Ships: {selected_ships}", WIDTH // 2 - 100, HEIGHT // 2)  # Shows current selection of ships
+        draw_text("Use UP and DOWN arrow keys to select the number of ships.", WIDTH // 2 - 300, HEIGHT // 2 + 50)  # Instructions for how to change the number of ships
+        draw_text("Press ENTER to start", WIDTH // 2 - 100, HEIGHT // 2 + 200)  # Instruction to press ENTER to start the game
 
-        pygame.display.flip()
+        pygame.display.flip()  # Update the display with the drawn text
 
+        # Event handling loop to listen for user inputs
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN: #If a keyboard stroke is detected
-                if event.key == pygame.K_UP and selected_ships < len(default_ships): #If up arrow key is pressed and we aren't at maximum of 5 ships
-                    selected_ships += 1 #Increment 1
-                elif event.key == pygame.K_DOWN and selected_ships > 1: #if down arrow up is pressed and we aren't at minimum of 1 ships yet
-                    selected_ships -= 1 #increment down 1
-                elif event.key == pygame.K_RETURN: #If enter, close this menu
-                    menu_running = False
-                    break
+            if event.type == pygame.QUIT:  # If the window is closed
+                pygame.quit()  # Close the game
+                quit()  # Stop the program
+            if event.type == pygame.KEYDOWN:  # If a key is pressed
+                # If the UP arrow is pressed and the number of ships is less than the max (assumed to be len(default_ships))
+                if event.key == pygame.K_UP and selected_ships < len(default_ships):
+                    selected_ships += 1  # Increase the number of ships by 1
+                # If the DOWN arrow is pressed and the number of ships is greater than 1 (minimum limit)
+                elif event.key == pygame.K_DOWN and selected_ships > 1:
+                    selected_ships -= 1  # Decrease the number of ships by 1
+                # If the ENTER key is pressed, exit the menu and start the game
+                elif event.key == pygame.K_RETURN:
+                    menu_running = False  # Stop the menu loop
+                    break  # Exit the event loop
 
-    return selected_ships #Return number of ships to use in game
+    return selected_ships  # Return the selected number of ships for the game
+
 
 def display_winner(winner, game_mode, player_score_1, player_score_2):
     """Display the winner and wait for user input. Only add score if a human player wins"""
@@ -1062,4 +1075,8 @@ def game_loop():
 
 if __name__ == "__main__":
     game_loop()
+
+
+
+
 
