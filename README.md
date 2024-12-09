@@ -1,89 +1,87 @@
-# EECS 581 Project 2 Battleship
-
+# Battleship
+## Overview
+### Description
 Battleship is a 2-player game where each player can position ships of various sizes (identical to their opponent's fleet) whereever they wish on a grid-based board.
 
 During each round, the active player selects a grid position to fire at. If the selected grid position aligns with that of an enemy ship, that ship is damaged.
 
-Once every slot of a given ship has been hit, the ship will sink.
+If every slot of a given ship has been hit, the ship will sink.
 
 Once all ships of a given player have been sunk, the game ends, and the player with one or more remaining ships is declared the winner.
 
-This original game was designed to run on a single device, with players expected to hand off control of the device between rounds.
+### Features
+The game has two playing modes: player-vs-AI and player-vs-player. 
 
-There is now an added functionality of playing with an AI. Players can choose to play with the AI in 3 different modes - easy, medium, and hard.
+Additionally, players get 100 points when they hit a ship and get penalized 1 point when they miss. When a player wins a game, their score is entered on the leaderboard.
 
-# Pygame (Prerequisite)
+## How To Play
+### Prerequisite: Pygame
 To run this game, you will be required to install Pygame.
 
 Assuming you already have Python installed, and have pip installed (usually pre-installed with Python), you should be able to simply run the following command in Command Prompt, Powershell, or Terminal depending on your OS:
 
-`pip install pygame`
+```
+pip install pygame
+```
 
 If that didn't work, you can find more detailed instructions to install Pygame [here](https://pypi.org/project/pygame/).
 
-# Documentation Instructions
-Documentation was generated using Doxygen.
-
-You can view this documentation by opening the .html files found in _./documentation/html/_. Commonly starting with the index.html file:
-
-_./documentation/html/index.html_
-
-It is recommended to view these .html files after the repository is downloaded to a system, so that the .html files may be viewed properly in a browser.
-
-From there, you can either click on the Namespaces tab near the top to access other pages, or you can use the search bar in the top right to search through documentation directly.
-
-# Playing The Game
+### Running the Game
 To play Battleship, run the following command in Command Prompt/Powershell/Terminal from the project's directory:
 
 `python main.py`
 
 Assuming Python and Pygame are installed correctly, you should see a window containing instructions on how to play the game.
 
-As this game is designed to be run on a single device, players are expected to hand off control of the device between rounds unless you choose to play with the AI.
+Note that as this game is designed to be run on a single device, players are expected to hand off control of the device between rounds in player-vs-player mode.
 
-When one player has sunk the other's entire fleet of ships, the game ends. At this point, you will be able to see the total number of hits and misses each player had along with the final score. The winning player will then be able to enter their name to the leaderboard.
-
-After the instructions window, you can choose to view the leaderboard or play the game. 
-
-# What is main_.py?
+## About the Source Code
+### What is main_.py?
 `main_.py` (not to be confused with `main.py`) is a "test" file that was used during initial development for experimental features.
 
 Effectively, it was a separate branch intended to be merged into the main branch when ready.
 
-# Score Board Implementation:
+### Documentation
+Some of the documentation was generated using Doxygen. To view this documentation, open the HTML files found in `./documentation/html/`. We recommend starting with the index file located at `./documentation/html/index.html`. 
 
-The Game gives players a hundred points when they hit a ship and subtracts 1 point when a player misses.  Scores are only entered to the leaderboard by the winner of a game.
+From there, you can either click on the Namespaces tab near the top to access other pages, or you can use the search bar in the top right to search through documentation directly.
 
-# Version History
+For a better experience, view these files in a browser after downloading the repository.
 
-1.01 -- Refactored code to accomadate new AI menu and added AI ship placement, empty functions for future AI and Score features 
-        Clarified Code Comments
+## Contributors
+This repository was forked from [maelikax/EECS581_Project1](https://github.com/maelikax/EECS581_Project1).
 
-1.03 -- Impelemented Easy AI that randomly attacks unshot at tiles 
-        Clarified Code Comments
+#### Contributors to the Original Repository
+<a href="https://github.com/Gatimio" target="_blank" title="Gatimio">
+  <img src="https://github.com/Gatimio.png?size=40" height="40" width="40" alt="Gatimio" />
+</a>
+<a href="https://github.com/sbuehler7524" target="_blank" title="sbuehler7524">
+  <img src="https://github.com/sbuehler7524.png?size=40" height="40" width="40" alt="sbuehler7524" />
+</a>
+<a href="https://github.com/maelikax" target="_blank" title="maelikax">
+  <img src="https://github.com/maelikax.png?size=40" height="40" width="40" alt="maelikax" />
+</a>
+<a href="https://github.com/andrewvand02" target="_blank" title="andrewvand02">
+  <img src="https://github.com/andrewvand02.png?size=40" height="40" width="40" alt="andrewvand02" />
+</a>
+<a href="https://github.com/swagranger011" target="_blank" title="swagranger011">
+  <img src="https://github.com/swagranger011.png?size=40" height="40" width="40" alt="swagranger011" />
+</a>
 
-1.05 -- Impelemented Medium AI that randomly attacks until it hits a ship and then checks the tiles around a hit to better target large ships
-        Clarified Code Comments
 
-1.07 -- Implemented simple leaderboard to test functionality
-        Clarified Code Comments
-
-1.08 -- Implemented Hard AI that targets player 1's ships directly to play perfect games.
-        Clarified Code Comments
-
-1.10 -- Fixed errors and added more documentation to make functions more clear
-
-1.13 -- First implementation of scoreboard.
-        Updated documetation
-
-1.16 -- Fixes to Hard AI functionality.
-
-1.23 -- Updated scoreboard to fix a bug
-
-1.25 -- Merged tweaked scoreboard and leaderboard code with all bugs squashed into main.py 
-
-1.27 -- Updated documentation and removed extra redundant files.
-
-1.33 -- Regenerated documentation, added all necessary files, and adequately commented all code
-
-1.34 -- Updated README.md to reflect accurate version history and game features
+#### Contributors to This Repository
+<a href="https://github.com/manvirk21" target="_blank" title="manvirk21">
+  <img src="https://github.com/manvirk21.png?size=40" height="40" width="40" alt="manvirk21" />
+</a>
+<a href="https://github.com/MatthewMcManness" target="_blank" title="MatthewMcManness">
+  <img src="https://github.com/MatthewMcManness.png?size=40" height="40" width="40" alt="MatthewMcManness" />
+</a>
+<a href="https://github.com/magaly3118" target="_blank" title="magaly3118">
+  <img src="https://github.com/magaly3118.png?size=40" height="40" width="40" alt="magaly3118" />
+</a>
+<a href="https://github.com/mariamoraby9" target="_blank" title="mariamoraby9">
+  <img src="https://github.com/mariamoraby9.png?size=40" height="40" width="40" alt="mariamoraby9" />
+</a>
+<a href="https://github.com/ShravyaMatta3" target="_blank" title="ShravyaMatta3">
+  <img src="https://github.com/ShravyaMatta3.png?size=40" height="40" width="40" alt="ShravyaMatta3" />
+</a>
