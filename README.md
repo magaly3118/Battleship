@@ -49,7 +49,7 @@ From there, you can either click on the Namespaces tab near the top to access ot
 For a better experience, view these files in a browser after downloading the repository.
 
 ## Contributors
-This repository was forked from Team 14's [Battleship](https://github.com/maelikax/EECS581_Project1). The features added by Team 21 were the scoreboard, the leaderboard, the player-vs-AI mode, and some additional menus needed for these.
+This repository was forked from Team 24's [Battleship](https://github.com/maelikax/EECS581_Project1). The features added by Team 21 were the scoreboard, the leaderboard, the player-vs-AI mode, and some additional menus needed for these.
 
 #### Team 14
 <a href="https://github.com/Gatimio" target="_blank" title="Gatimio">
