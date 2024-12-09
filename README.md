@@ -49,9 +49,9 @@ From there, you can either click on the Namespaces tab near the top to access ot
 For a better experience, view these files in a browser after downloading the repository.
 
 ## Contributors
-This repository was forked from [maelikax/EECS581_Project1](https://github.com/maelikax/EECS581_Project1).
+This repository was forked from Team 14's [Battleship](https://github.com/maelikax/EECS581_Project1). The features added by Team 21 were the scoreboard, the leaderboard, the player-vs-AI mode, and some additional menus needed for these.
 
-#### Contributors to the Original Repository
+#### Team 14
 <a href="https://github.com/Gatimio" target="_blank" title="Gatimio">
   <img src="https://github.com/Gatimio.png?size=40" height="40" width="40" alt="Gatimio" />
 </a>
@@ -69,7 +69,7 @@ This repository was forked from [maelikax/EECS581_Project1](https://github.com/m
 </a>
 
 
-#### Contributors to This Repository
+#### Team 21
 <a href="https://github.com/manvirk21" target="_blank" title="manvirk21">
   <img src="https://github.com/manvirk21.png?size=40" height="40" width="40" alt="manvirk21" />
 </a>
